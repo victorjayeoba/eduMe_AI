@@ -60,6 +60,7 @@ export default function EduMeAiLanding() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isMuted, setIsMuted] = useState(false)
   const [isVideoOn, setIsVideoOn] = useState(true)
+  const [isScrolled, setIsScrolled] = useState(false)
   const [chatMessages, setChatMessages] = useState([
     { id: 1, text: "Hi! I'm struggling with this calculus problem.", sender: "student", visible: false },
     { id: 2, text: "I'd be happy to help! Let me see what you're working on.", sender: "ai", visible: false },
@@ -76,44 +77,92 @@ export default function EduMeAiLanding() {
     showMessages()
   }, [])
 
+  // Add scroll event listener to detect when page is scrolled
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 20) {
+        setIsScrolled(true)
+      } else {
+        setIsScrolled(false)
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [])
+
+  // Smooth scroll to section
+  const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+    e.preventDefault()
+    const element = document.getElementById(id)
+    if (element) {
+      element.scrollIntoView({
+        behavior: 'smooth'
+      })
+    }
+    setIsMenuOpen(false)
+  }
+
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <div className="fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 lg:px-8 pt-4">
-        <header className="max-w-7xl mx-auto bg-white rounded-xl shadow-md border border-gray-100">
+      <div className={`w-full z-50 transition-all duration-300 ease-in-out ${isScrolled ? 'fixed top-0 left-0 right-0 px-4 sm:px-6 lg:px-8 pt-4' : 'relative border-b border-gray-100'}`}>
+        <header className={`max-w-7xl mx-auto ${isScrolled ? 'bg-white rounded-xl shadow-md border border-gray-100 transition-transform duration-300 ease-in-out' : 'bg-white'}`}>
           <div className="flex justify-between items-center h-20 px-6">
             {/* Logo */}
-            <div className="flex items-center">
-              <img src="/edumeai-logo.png" alt="EduMeAI Logo" className="h-16 mr-1" />
+            <Link href="/" className="flex items-center group">
+              <img src="/edumeai-logo.png" alt="EduMeAI Logo" className="h-16 mr-1 transition-transform duration-200 ease-in-out group-hover:scale-105" />
               <div className="flex items-center space-x-0.5">
                 <span className="text-xl font-bold text-black">EduMe</span>
                 <span className="text-xl font-bold text-black bg-black/10 px-1 py-0.5 rounded-md border border-black/20">
                   AI
                 </span>
               </div>
-            </div>
+            </Link>
 
             {/* Desktop Navigation - Centered */}
             <nav className="hidden md:flex items-center space-x-12">
-              <a href="#tutoring" className="text-gray-800 hover:text-black font-medium transition-colors">
+              <a 
+                href="#tutoring" 
+                onClick={(e) => scrollToSection(e, 'tutoring')}
+                className="text-gray-800 hover:text-black font-medium transition-colors relative group"
+              >
                 AI Tutoring
+                <span className="absolute bottom-0 left-0 w-full h-0.5 bg-black scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
               </a>
-              
-              <a href="#pathfinder" className="text-gray-800 hover:text-black font-medium transition-colors">
+              <a 
+                href="#pathfinder" 
+                onClick={(e) => scrollToSection(e, 'pathfinder')}
+                className="text-gray-800 hover:text-black font-medium transition-colors relative group"
+              >
                 Career Guide
+                <span className="absolute bottom-0 left-0 w-full h-0.5 bg-black scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
               </a>
-              <a href="#exams" className="text-gray-800 hover:text-black font-medium transition-colors">
+              <a 
+                href="#exams" 
+                onClick={(e) => scrollToSection(e, 'exams')}
+                className="text-gray-800 hover:text-black font-medium transition-colors relative group"
+              >
                 Exam Prep
+                <span className="absolute bottom-0 left-0 w-full h-0.5 bg-black scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
               </a>
-              <a href="#skills" className="text-gray-800 hover:text-black font-medium transition-colors">
+              <a 
+                href="#skills" 
+                onClick={(e) => scrollToSection(e, 'skills')}
+                className="text-gray-800 hover:text-black font-medium transition-colors relative group"
+              >
                 Skill Hub
+                <span className="absolute bottom-0 left-0 w-full h-0.5 bg-black scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
               </a>
             </nav>
 
             {/* CTA Button */}
             <div className="hidden md:flex items-center space-x-4">
-              <Link href="/login" className="text-gray-800 hover:text-black font-medium transition-colors">
+              <Link href="/login" className="text-gray-800 hover:text-black font-medium transition-colors relative group">
                 Log in
+                <span className="absolute bottom-0 left-0 w-full h-0.5 bg-black scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
               </Link>
               <Button
                 size="sm"
@@ -138,19 +187,35 @@ export default function EduMeAiLanding() {
 
       {/* Mobile Navigation */}
       {isMenuOpen && (
-        <div className="md:hidden fixed top-24 left-4 right-4 z-50 bg-white rounded-xl shadow-md border border-gray-100">
+        <div className={`md:hidden ${isScrolled ? 'fixed top-24 left-4 right-4' : 'relative mt-0 mx-4'} z-50 bg-white rounded-xl shadow-md border border-gray-100`}>
           <div className="px-4 py-2 space-y-2">
-            <a href="#tutoring" className="block py-2 text-black hover:text-gray-600">
+            <a 
+              href="#tutoring" 
+              onClick={(e) => scrollToSection(e, 'tutoring')}
+              className="block py-2 text-black hover:text-gray-600"
+            >
               AI Tutoring
             </a>
             
-            <a href="#pathfinder" className="block py-2 text-black hover:text-gray-600">
+            <a 
+              href="#pathfinder" 
+              onClick={(e) => scrollToSection(e, 'pathfinder')}
+              className="block py-2 text-black hover:text-gray-600"
+            >
               Career Guide
             </a>
-            <a href="#exams" className="block py-2 text-black hover:text-gray-600">
+            <a 
+              href="#exams" 
+              onClick={(e) => scrollToSection(e, 'exams')}
+              className="block py-2 text-black hover:text-gray-600"
+            >
               Exam Prep
             </a>
-            <a href="#skills" className="block py-2 text-black hover:text-gray-600">
+            <a 
+              href="#skills" 
+              onClick={(e) => scrollToSection(e, 'skills')}
+              className="block py-2 text-black hover:text-gray-600"
+            >
               Skill Hub
             </a>
             <div className="flex flex-col space-y-2 pt-2 border-t border-gray-100 mt-2">
@@ -169,8 +234,8 @@ export default function EduMeAiLanding() {
         </div>
       )}
       
-      {/* Header spacer */}
-      <div className="h-32"></div>
+      {/* Header spacer - only when scrolled */}
+      {isScrolled && <div className="h-32"></div>}
 
       {/* Hero Section */}
       <section className="relative min-h-[calc(100vh-8rem)] flex items-center justify-center overflow-hidden">
@@ -1225,6 +1290,12 @@ export default function EduMeAiLanding() {
             <div>
               <div className="flex items-center mb-4">
                 <img src="/edumeai-logo.png" alt="EduMeAI Logo" className="h-8 mr-2" />
+                <div className="flex items-center space-x-0.5">
+                <span className="text-xl font-bold text-black">EduMe</span>
+                <span className="text-xl font-bold text-black bg-black/10 px-1 py-0.5 rounded-md border border-black/20">
+                  AI
+                </span>
+              </div>
               </div>
               <p className="text-gray-600 text-sm mb-4">
                 Your AI-powered live tutoring platform for personalized learning, career guidance, and skill development.

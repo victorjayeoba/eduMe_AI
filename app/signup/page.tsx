@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -13,6 +13,7 @@ export default function SignupPage() {
   const [password, setPassword] = useState("")
   const [isStudentEmail, setIsStudentEmail] = useState(false)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(false)
 
   // Check if email is a student email
   const checkStudentEmail = (email: string) => {
@@ -26,39 +27,57 @@ export default function SignupPage() {
     setIsStudentEmail(checkStudentEmail(newEmail))
   }
 
+  // Add scroll event listener to detect when page is scrolled
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 20) {
+        setIsScrolled(true)
+      } else {
+        setIsScrolled(false)
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [])
+
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <div className="fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 lg:px-8 pt-4">
-        <header className="max-w-7xl mx-auto bg-white rounded-xl shadow-md border border-gray-100">
+      <div className={`w-full z-50 transition-all duration-300 ease-in-out ${isScrolled ? 'fixed top-0 left-0 right-0 px-4 sm:px-6 lg:px-8 pt-4' : 'relative border-b border-gray-100'}`}>
+        <header className={`max-w-7xl mx-auto ${isScrolled ? 'bg-white rounded-xl shadow-md border border-gray-100 transition-transform duration-300 ease-in-out' : 'bg-white'}`}>
           <div className="flex justify-between items-center h-16 px-6">
             {/* Logo */}
-            <div className="flex items-center">
-              <Link href="/">
-                <img src="/edumeai-logo.png" alt="EduMeAI Logo" className="h-12 mr-1" />
-              </Link>
+            <Link href="/" className="flex items-center group">
+              <img src="/edumeai-logo.png" alt="EduMeAI Logo" className="h-12 mr-1 transition-transform duration-200 ease-in-out group-hover:scale-105" />
               <div className="flex items-center space-x-0.5">
                 <span className="text-xl font-bold text-black">EduMe</span>
                 <span className="text-xl font-bold text-black bg-black/10 px-1 py-0.5 rounded-md border border-black/20">
                   AI
                 </span>
               </div>
-            </div>
+            </Link>
 
             {/* Desktop Navigation - Centered */}
             <nav className="hidden md:flex items-center space-x-8">
-              <Link href="/#tutoring" className="text-gray-800 hover:text-black font-medium transition-colors">
+              <Link href="/#tutoring" className="text-gray-800 hover:text-black font-medium transition-colors relative group">
                 AI Tutoring
+                <span className="absolute bottom-0 left-0 w-full h-0.5 bg-black scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
               </Link>
               
-              <Link href="/#pathfinder" className="text-gray-800 hover:text-black font-medium transition-colors">
+              <Link href="/#pathfinder" className="text-gray-800 hover:text-black font-medium transition-colors relative group">
                 Career Guide
+                <span className="absolute bottom-0 left-0 w-full h-0.5 bg-black scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
               </Link>
-              <Link href="/#exams" className="text-gray-800 hover:text-black font-medium transition-colors">
+              <Link href="/#exams" className="text-gray-800 hover:text-black font-medium transition-colors relative group">
                 Exam Prep
+                <span className="absolute bottom-0 left-0 w-full h-0.5 bg-black scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
               </Link>
-              <Link href="/#skills" className="text-gray-800 hover:text-black font-medium transition-colors">
+              <Link href="/#skills" className="text-gray-800 hover:text-black font-medium transition-colors relative group">
                 Skill Hub
+                <span className="absolute bottom-0 left-0 w-full h-0.5 bg-black scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
               </Link>
             </nav>
 
@@ -86,7 +105,7 @@ export default function SignupPage() {
 
       {/* Mobile Navigation */}
       {isMenuOpen && (
-        <div className="md:hidden fixed top-24 left-4 right-4 z-50 bg-white rounded-xl shadow-md border border-gray-100">
+        <div className={`md:hidden ${isScrolled ? 'fixed top-24 left-4 right-4' : 'relative mt-0 mx-4'} z-50 bg-white rounded-xl shadow-md border border-gray-100`}>
           <div className="px-4 py-2 space-y-2">
             <Link href="/#tutoring" className="block py-2 text-black hover:text-gray-600">
               AI Tutoring
@@ -112,8 +131,8 @@ export default function SignupPage() {
         </div>
       )}
       
-      {/* Header spacer */}
-      <div className="h-24"></div>
+      {/* Header spacer - only when scrolled */}
+      {isScrolled && <div className="h-24"></div>}
       
       <div className="flex flex-col items-center justify-center px-4 py-2">
         <div className="w-full max-w-md">
