@@ -27,6 +27,7 @@ import {
   Brain,
   Clock,
 } from "lucide-react"
+import Link from "next/link"
 
 // Partner data with logos
 const partnersData = [
@@ -78,12 +79,12 @@ export default function EduMeAiLanding() {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="relative z-50 bg-white shadow-sm border-b border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-20 sticky top-0 bg-white">
+      <div className="fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 lg:px-8 pt-4">
+        <header className="max-w-7xl mx-auto bg-white rounded-xl shadow-md border border-gray-100">
+          <div className="flex justify-between items-center h-20 px-6">
             {/* Logo */}
             <div className="flex items-center">
-              <img src="/edumeai-logo.png" alt="EduMeAI Logo" className="h-20 mr-1" />
+              <img src="/edumeai-logo.png" alt="EduMeAI Logo" className="h-16 mr-1" />
               <div className="flex items-center space-x-0.5">
                 <span className="text-xl font-bold text-black">EduMe</span>
                 <span className="text-xl font-bold text-black bg-black/10 px-1 py-0.5 rounded-md border border-black/20">
@@ -97,9 +98,7 @@ export default function EduMeAiLanding() {
               <a href="#tutoring" className="text-gray-800 hover:text-black font-medium transition-colors">
                 AI Tutoring
               </a>
-              <a href="#avatars" className="text-gray-800 hover:text-black font-medium transition-colors">
-                Use Cases
-              </a>
+              
               <a href="#pathfinder" className="text-gray-800 hover:text-black font-medium transition-colors">
                 Career Guide
               </a>
@@ -112,14 +111,20 @@ export default function EduMeAiLanding() {
             </nav>
 
             {/* CTA Button */}
-            <div className="hidden md:block">
+            <div className="hidden md:flex items-center space-x-4">
+              <Link href="/login" className="text-gray-800 hover:text-black font-medium transition-colors">
+                Log in
+              </Link>
               <Button
                 size="sm"
                 variant="outline"
                 className="border-black text-black hover:bg-black hover:text-white px-6 py-2 rounded-[24px] transition-all duration-300 relative overflow-hidden group"
+                asChild
               >
-                <span className="relative z-10">Try Now</span>
-                <span className="absolute inset-0 bg-black scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
+                <Link href="/signup">
+                  <span className="relative z-10">Sign Up</span>
+                  <span className="absolute inset-0 bg-black scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
+                </Link>
               </Button>
             </div>
 
@@ -128,40 +133,47 @@ export default function EduMeAiLanding() {
               {isMenuOpen ? <X className="h-6 w-6 text-black" /> : <Menu className="h-6 w-6 text-black" />}
             </button>
           </div>
-        </div>
+        </header>
+      </div>
 
-        {/* Mobile Navigation */}
-        {isMenuOpen && (
-          <div className="md:hidden bg-white border-t border-gray-200">
-            <div className="px-4 py-2 space-y-2">
-              <a href="#tutoring" className="block py-2 text-black hover:text-gray-600">
-                AI Tutoring
-              </a>
-              <a href="#avatars" className="block py-2 text-black hover:text-gray-600">
-                Use Cases
-              </a>
-              <a href="#pathfinder" className="block py-2 text-black hover:text-gray-600">
-                Career Guide
-              </a>
-              <a href="#exams" className="block py-2 text-black hover:text-gray-600">
-                Exam Prep
-              </a>
-              <a href="#skills" className="block py-2 text-black hover:text-gray-600">
-                Skill Hub
-              </a>
+      {/* Mobile Navigation */}
+      {isMenuOpen && (
+        <div className="md:hidden fixed top-24 left-4 right-4 z-50 bg-white rounded-xl shadow-md border border-gray-100">
+          <div className="px-4 py-2 space-y-2">
+            <a href="#tutoring" className="block py-2 text-black hover:text-gray-600">
+              AI Tutoring
+            </a>
+            
+            <a href="#pathfinder" className="block py-2 text-black hover:text-gray-600">
+              Career Guide
+            </a>
+            <a href="#exams" className="block py-2 text-black hover:text-gray-600">
+              Exam Prep
+            </a>
+            <a href="#skills" className="block py-2 text-black hover:text-gray-600">
+              Skill Hub
+            </a>
+            <div className="flex flex-col space-y-2 pt-2 border-t border-gray-100 mt-2">
+              <Link href="/login" className="block py-2 text-black hover:text-gray-600">
+                Log in
+              </Link>
               <Button
                 size="sm"
-                className="bg-black hover:bg-black/80 text-white px-4 w-full rounded-[24px] transition-all duration-300"
+                className="bg-black hover:bg-black/80 text-white px-4 w-full rounded-[24px] transition-all duration-300 mt-2"
+                asChild
               >
-                Try Now
+                <Link href="/signup">Sign Up</Link>
               </Button>
             </div>
           </div>
-        )}
-      </header>
+        </div>
+      )}
+      
+      {/* Header spacer */}
+      <div className="h-32"></div>
 
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      <section className="relative min-h-[calc(100vh-8rem)] flex items-center justify-center overflow-hidden">
         {/* Background */}
         <div
           className="absolute inset-0 z-0"
@@ -1175,7 +1187,7 @@ export default function EduMeAiLanding() {
           
           <div className="relative">
             <Marquee
-              speed={25}
+              speed={60}
               direction="right"
               gradient={true}
               gradientColor="white"
@@ -1204,8 +1216,11 @@ export default function EduMeAiLanding() {
       </section>
 
       {/* Footer */}
-      <footer id="about" className="py-12 bg-white border-t border-gray-300">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <footer id="about" className="py-12 border-t border-gray-300 relative">
+        <div className="absolute inset-0 z-0 opacity-10">
+          <img src="/world-map.png" alt="World Map" className="w-full h-full object-cover" />
+        </div>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div>
               <div className="flex items-center mb-4">
@@ -1239,7 +1254,6 @@ export default function EduMeAiLanding() {
               <h4 className="font-bold text-black mb-4">Features</h4>
               <ul className="space-y-2">
                 <li><a href="#tutoring" className="text-gray-600 hover:text-black">AI Tutoring</a></li>
-                <li><a href="#avatars" className="text-gray-600 hover:text-black">Use Cases</a></li>
                 <li><a href="#pathfinder" className="text-gray-600 hover:text-black">Career Guide</a></li>
                 <li><a href="#exams" className="text-gray-600 hover:text-black">Exam Preparation</a></li>
                 <li><a href="#skills" className="text-gray-600 hover:text-black">Skill Development</a></li>
@@ -1268,7 +1282,7 @@ export default function EduMeAiLanding() {
           </div>
 
           <div className="pt-8 border-t border-gray-200 text-center">
-            <p className="text-gray-600">© 2024 EduMeAi. All rights reserved.</p>
+            <p className="text-gray-600">© 2025 EduMeAi. All rights reserved.</p>
           </div>
         </div>
       </footer>
