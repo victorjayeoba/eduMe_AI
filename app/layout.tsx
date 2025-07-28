@@ -2,10 +2,13 @@ import type { Metadata } from 'next'
 import { GeistSans } from 'geist/font/sans'
 import { GeistMono } from 'geist/font/mono'
 import './globals.css'
+import { AuthProvider } from '@/contexts/auth-context'
+import { ThemeProvider } from '@/components/theme-provider'
+import { Toaster } from 'sonner'
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
+  title: 'EduMeAI - AI-Powered Learning Platform',
+  description: 'AI-powered tutoring, career guidance, exam prep, and skill development',
   generator: 'v0.dev',
 }
 
@@ -25,7 +28,17 @@ html {
 }
         `}</style>
       </head>
-      <body>{children}</body>
+      <body>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <AuthProvider>{children}</AuthProvider>
+          <Toaster position="top-right" />
+        </ThemeProvider>
+      </body>
     </html>
   )
 }

@@ -26,8 +26,11 @@ import {
   Target,
   Brain,
   Clock,
+  UserCircle,
+  LogOut,
 } from "lucide-react"
 import Link from "next/link"
+import { useAuth } from "@/contexts/auth-context"
 
 // Partner data with logos
 const partnersData = [
@@ -66,6 +69,8 @@ export default function EduMeAiLanding() {
     { id: 2, text: "I'd be happy to help! Let me see what you're working on.", sender: "ai", visible: false },
     { id: 3, text: "Can you walk me through derivatives step by step?", sender: "student", visible: false },
   ])
+  
+  const { user, logOut } = useAuth()
 
   useEffect(() => {
     const showMessages = async () => {
@@ -104,6 +109,14 @@ export default function EduMeAiLanding() {
     }
     setIsMenuOpen(false)
   }
+
+  const handleLogout = async () => {
+    try {
+      await logOut();
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-white">
@@ -160,21 +173,47 @@ export default function EduMeAiLanding() {
 
             {/* CTA Button */}
             <div className="hidden md:flex items-center space-x-4">
-              <Link href="/login" className="text-gray-800 hover:text-black font-medium transition-colors relative group">
-                Log in
-                <span className="absolute bottom-0 left-0 w-full h-0.5 bg-black scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
-              </Link>
-              <Button
-                size="sm"
-                variant="outline"
-                className="border-black text-black hover:bg-black hover:text-white px-6 py-2 rounded-[24px] transition-all duration-300 relative overflow-hidden group"
-                asChild
-              >
-                <Link href="/signup">
-                  <span className="relative z-10">Sign Up</span>
-                  <span className="absolute inset-0 bg-black scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
-                </Link>
-              </Button>
+              {user ? (
+                <>
+                  <Link href="/dashboard" className="text-gray-800 hover:text-black font-medium transition-colors relative group">
+                    Dashboard
+                    <span className="absolute bottom-0 left-0 w-full h-0.5 bg-black scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
+                  </Link>
+                  <div className="flex items-center space-x-2">
+                    <UserCircle className="w-5 h-5 text-gray-700" />
+                    <span className="text-sm font-medium truncate max-w-[120px]">
+                      {user.email?.split('@')[0] || 'User'}
+                    </span>
+                  </div>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="border-black text-black hover:bg-black hover:text-white px-6 py-2 rounded-[24px] transition-all duration-300 relative overflow-hidden group"
+                    onClick={handleLogout}
+                  >
+                    <span className="relative z-10">Log Out</span>
+                    <span className="absolute inset-0 bg-black scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Link href="/login" className="text-gray-800 hover:text-black font-medium transition-colors relative group">
+                    Log in
+                    <span className="absolute bottom-0 left-0 w-full h-0.5 bg-black scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
+                  </Link>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="border-black text-black hover:bg-black hover:text-white px-6 py-2 rounded-[24px] transition-all duration-300 relative overflow-hidden group"
+                    asChild
+                  >
+                    <Link href="/signup">
+                      <span className="relative z-10">Sign Up</span>
+                      <span className="absolute inset-0 bg-black scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
+                    </Link>
+                  </Button>
+                </>
+              )}
             </div>
 
             {/* Mobile menu button */}
@@ -183,12 +222,17 @@ export default function EduMeAiLanding() {
             </button>
           </div>
         </header>
-      </div>
+        </div>
 
-      {/* Mobile Navigation */}
-      {isMenuOpen && (
+        {/* Mobile Navigation */}
+        {isMenuOpen && (
         <div className={`md:hidden ${isScrolled ? 'fixed top-24 left-4 right-4' : 'relative mt-0 mx-4'} z-50 bg-white rounded-xl shadow-md border border-gray-100`}>
-          <div className="px-4 py-2 space-y-2">
+            <div className="px-4 py-2 space-y-2">
+            {user && (
+              <Link href="/dashboard" className="block py-2 text-black hover:text-gray-600">
+                Dashboard
+              </Link>
+            )}
             <a 
               href="#tutoring" 
               onClick={(e) => scrollToSection(e, 'tutoring')}
@@ -219,20 +263,38 @@ export default function EduMeAiLanding() {
               Skill Hub
             </a>
             <div className="flex flex-col space-y-2 pt-2 border-t border-gray-100 mt-2">
-              <Link href="/login" className="block py-2 text-black hover:text-gray-600">
-                Log in
-              </Link>
-              <Button
-                size="sm"
-                className="bg-black hover:bg-black/80 text-white px-4 w-full rounded-[24px] transition-all duration-300 mt-2"
-                asChild
-              >
-                <Link href="/signup">Sign Up</Link>
-              </Button>
+              {user ? (
+                <>
+                  <div className="flex items-center py-2">
+                    <UserCircle className="w-5 h-5 text-gray-700 mr-2" />
+                    <span className="text-sm font-medium truncate">{user.email?.split('@')[0] || 'User'}</span>
+                  </div>
+                  <Button
+                    size="sm"
+                    className="bg-black hover:bg-black/80 text-white px-4 w-full rounded-[24px] transition-all duration-300 mt-2"
+                    onClick={handleLogout}
+                  >
+                    Log Out
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Link href="/login" className="block py-2 text-black hover:text-gray-600">
+                    Log in
+                  </Link>
+                  <Button
+                    size="sm"
+                    className="bg-black hover:bg-black/80 text-white px-4 w-full rounded-[24px] transition-all duration-300 mt-2"
+                    asChild
+                  >
+                    <Link href="/signup">Sign Up</Link>
+                  </Button>
+                </>
+              )}
+            </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
       
       {/* Header spacer - only when scrolled */}
       {isScrolled && <div className="h-32"></div>}
@@ -852,7 +914,7 @@ export default function EduMeAiLanding() {
                       <div className="w-3 h-3 bg-white/50 rounded-full"></div>
                       <div className="w-3 h-3 bg-white/50 rounded-full"></div>
                       <div className="w-3 h-3 bg-white/50 rounded-full"></div>
-                    </div>
+                  </div>
                     <p className="text-lg mb-4">What subjects do you enjoy the most?</p>
                     <div className="grid grid-cols-2 gap-3 max-w-xs mx-auto">
                       <button className="bg-gray-700 hover:bg-gray-600 py-2 px-4 rounded-md text-sm transition-colors">
@@ -867,9 +929,9 @@ export default function EduMeAiLanding() {
                       <button className="bg-gray-700 hover:bg-gray-600 py-2 px-4 rounded-md text-sm transition-colors">
                         Arts
                       </button>
-                    </div>
-                  </div>
                 </div>
+            </div>
+          </div>
 
                 {/* Progress Indicator */}
                 <div className="flex justify-between items-center">
@@ -877,13 +939,13 @@ export default function EduMeAiLanding() {
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M15 18l-6-6 6-6"/>
                     </svg>
-                  </button>
+            </button>
                   <div className="text-sm">Question 1 of 5</div>
                   <button className="p-3 bg-gray-700 rounded-lg hover:bg-gray-600 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M9 18l6-6-6-6"/>
                     </svg>
-                  </button>
+            </button>
                 </div>
               </div>
 
@@ -1291,11 +1353,11 @@ export default function EduMeAiLanding() {
               <div className="flex items-center mb-4">
                 <img src="/edumeai-logo.png" alt="EduMeAI Logo" className="h-8 mr-2" />
                 <div className="flex items-center space-x-0.5">
-                <span className="text-xl font-bold text-black">EduMe</span>
+              <span className="text-xl font-bold text-black">EduMe</span>
                 <span className="text-xl font-bold text-black bg-black/10 px-1 py-0.5 rounded-md border border-black/20">
-                  AI
-                </span>
-              </div>
+                AI
+              </span>
+            </div>
               </div>
               <p className="text-gray-600 text-sm mb-4">
                 Your AI-powered live tutoring platform for personalized learning, career guidance, and skill development.
@@ -1319,8 +1381,8 @@ export default function EduMeAiLanding() {
                   </svg>
                 </a>
               </div>
-            </div>
-            
+          </div>
+
             <div>
               <h4 className="font-bold text-black mb-4">Features</h4>
               <ul className="space-y-2">
