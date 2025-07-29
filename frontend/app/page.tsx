@@ -142,11 +142,11 @@ export default function EduMeAiLanding() {
                   <Button
                     size="sm"
                     variant="outline"
-                    className={`${isScrolled ? 'border-white text-white hover:bg-white hover:text-black' : 'border-black text-black hover:bg-black hover:text-white'} px-6 py-2 rounded-[24px] transition-all duration-300 relative overflow-hidden group`}
+                    className={`${isScrolled ? 'border-white text-black hover:bg-transparent hover:text-white' : 'border-black text-black hover:bg-black hover:text-white'} px-6 py-2 rounded-[24px] transition-all duration-300 relative overflow-hidden group`}
                     onClick={handleLogout}
                   >
                     <span className="relative z-10">Log Out</span>
-                    <span className={`absolute inset-0 ${isScrolled ? 'bg-white' : 'bg-black'} scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left`}></span>
+                    <span className={`absolute inset-0 ${isScrolled ? 'bg-transparent' : 'bg-black'} scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left`}></span>
                   </Button>
                 </>
               ) : (
