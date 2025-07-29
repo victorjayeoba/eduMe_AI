@@ -5,6 +5,7 @@ import Link from "next/link"
 import { Menu, X, UserCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/contexts/auth-context"
+import AnimatedGradient from "@/components/ui/animated-gradient"
 import {
   Hero,
   Features,
@@ -61,8 +62,15 @@ export default function EduMeAiLanding() {
   };
 
   return (
-    <div className=" min-h-screen ">
-      
+    <div className="relative min-h-screen ">
+                  <AnimatedGradient 
+          width="100%" 
+          height="400px"
+          blur="blur-md"
+          animationDuration={15}
+          zIndex={5}
+          borderRadius="rounded-b-[100%]"
+        />
       {/* Header */}
   
 

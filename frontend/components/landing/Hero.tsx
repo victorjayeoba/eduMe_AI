@@ -5,6 +5,7 @@ import { motion, useMotionValue, useTransform, useAnimation } from "framer-motio
 import TrueFocus from "../react-bits/TrueFocus"
 import TextType from "../react-bits/TextType"
 import Aurora from "../react-bits/Aurora"
+import AnimatedGradient from "../ui/animated-gradient"
 
 export default function Hero() {
   // Videos for the carousel
@@ -112,6 +113,9 @@ export default function Hero() {
       </Head>
       
       <section className="relative bg-white py-20 overflow-hidden font-['Montserrat']">
+        {/* Dynamic animated gradient */}
+  
+        
         <div className="max-w-7xl mx-auto z-[800] px-4 sm:px-6 lg:px-8 relative z-10">
           {/* Centered Content */}
 
@@ -132,7 +136,7 @@ export default function Hero() {
               </span>
             </h1>
             
-            <p className="text-lg md:text-2xl text-gray-700 mb-10 mx-auto max-w-2xl font-medium tracking-wide [text-shadow:_0_1px_1px_rgba(255,255,255,0.5)]">
+            <p className="text-lg md:text-2xl text-gray-500 mb-10 mx-auto max-w-2xl font-medium tracking-wide [text-shadow:_0_1px_1px_rgba(255,255,255,0.5)]">
               <TextType
                 text = {[
                 "Curated for your rhythm. Built with care.",
@@ -141,12 +145,12 @@ export default function Hero() {
                 "More than smart. It's made for how you think."
               ]}
                 as="span"
-                className="text-type text-gray-700"
+                className="text-type text-gray-500"
                 showCursor={true}
                 hideCursorWhileTyping={false}
                 cursorCharacter="|"
-                textColors={["#333333", "#333333", "#333333", "#333333", "#333333"]}
-                cursorClassName="text-type__cursor text-gray-700"
+                textColors={["#666666", "#666666", "#666666", "#666666", "#666666"]}
+                cursorClassName="text-type__cursor text-gray-500"
                 cursorBlinkDuration={0.5}
               />
             </p>
