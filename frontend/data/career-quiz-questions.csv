@@ -1,0 +1,153 @@
+id,batch,category,question_text,option_code,option_text,branch_target,weight
+core_01,core,interests,"Which activities do you enjoy most?",A,"Art, writing, music, drama",arts,1
+core_01,core,interests,"Which activities do you enjoy most?",B,"Maths, coding, science experiments",tech,1
+core_01,core,interests,"Which activities do you enjoy most?",C,"Leading projects, organizing events, selling",business,1
+core_01,core,interests,"Which activities do you enjoy most?",D,"Helping others, teaching, counselling",health,1
+core_02,core,values,"What matters most in a job?",A,"High salary over ₦300k/month",business,1
+core_02,core,values,"What matters most in a job?",B,"Flexible hours, work-life balance",arts,1
+core_02,core,values,"What matters most in a job?",C,"Helping people or society",health,1
+core_02,core,values,"What matters most in a job?",D,"Security and steady income",business,1
+core_03,core,entrepreneurship,"Would you like to run your own business someday?",A,"Yes, I'd love to be my own boss",business,1
+core_03,core,entrepreneurship,"Would you like to run your own business someday?",B,"No, I prefer working for others",health,1
+core_03,core,entrepreneurship,"Would you like to run your own business someday?",C,"Maybe freelance or side hustle",arts,1
+core_03,core,entrepreneurship,"Would you like to run your own business someday?",D,"Not sure yet",tech,1
+core_04,core,budget,"Where can you afford to study?",A,"Federal university (low fees)",federal,1
+core_04,core,budget,"Where can you afford to study?",B,"State university",state,1
+core_04,core,budget,"Where can you afford to study?",C,"Private university or specialist college",private,1
+core_04,core,budget,"Where can you afford to study?",D,"Study abroad",abroad,1
+core_05,core,academic,"What JAMB score range do you expect?",A,"Below 200",low,1
+core_05,core,academic,"What JAMB score range do you expect?",B,"200-250",medium,1
+core_05,core,academic,"What JAMB score range do you expect?",C,"250-300",high,1
+core_05,core,academic,"What JAMB score range do you expect?",D,"Above 300",excellent,1
+core_06,core,work_style,"Do you prefer working with...",A,"Creative ideas or designs",arts,1
+core_06,core,work_style,"Do you prefer working with...",B,"Numbers, data or machines",tech,1
+core_06,core,work_style,"Do you prefer working with...",C,"Teams and people",business,1
+core_06,core,work_style,"Do you prefer working with...",D,"Caring or teaching others",health,1
+core_07,core,skills,"What are your strongest skills?",A,"Drawing, writing, designing",arts,1
+core_07,core,skills,"What are your strongest skills?",B,"Maths, logic, data",tech,1
+core_07,core,skills,"What are your strongest skills?",C,"Communication and persuasion",business,1
+core_07,core,skills,"What are your strongest skills?",D,"Organizing and planning",business,1
+core_08,core,education_path,"Would you like early work experience before university?",A,"Yes, through internship or apprenticeship",business,1
+core_08,core,education_path,"Would you like early work experience before university?",B,"No, I'd go directly to a degree",tech,1
+core_08,core,education_path,"Would you like early work experience before university?",C,"I'd like a diploma or NYSC route first",health,1
+core_08,core,education_path,"Would you like early work experience before university?",D,"I'd prefer online or vocational training",arts,1
+core_09,core,learning_style,"How do you study best?",A,"Reading, writing, and solo learning",arts,1
+core_09,core,learning_style,"How do you study best?",B,"Experiments, labs or hands-on practice",tech,1
+core_09,core,learning_style,"How do you study best?",C,"Group projects or discussions",business,1
+core_09,core,learning_style,"How do you study best?",D,"Real-world experience and practice",health,1
+core_10,core,motivation,"What is more exciting to you?",A,"Building products, apps, or solutions",tech,1
+core_10,core,motivation,"What is more exciting to you?",B,"Solving science or technical problems",tech,1
+core_10,core,motivation,"What is more exciting to you?",C,"Planning or managing events and people",business,1
+core_10,core,motivation,"What is more exciting to you?",D,"Teaching or supporting others",health,1
+tech_01,tech,subject_preference,"Which subject do you enjoy most in school?",A,"Mathematics",computer_science,1
+tech_01,tech,subject_preference,"Which subject do you enjoy most in school?",B,"Physics or Chemistry",engineering,1
+tech_01,tech,subject_preference,"Which subject do you enjoy most in school?",C,"Biology or Agricultural Science",life_sciences,1
+tech_01,tech,subject_preference,"Which subject do you enjoy most in school?",D,"Technical Drawing or ICT",design_tech,1
+tech_02,tech,problem_solving,"What kind of problem do you like solving?",A,"Writing code or algorithms",software,1
+tech_02,tech,problem_solving,"What kind of problem do you like solving?",B,"Fixing machines or electronics",hardware,1
+tech_02,tech,problem_solving,"What kind of problem do you like solving?",C,"Understanding life and environment",research,1
+tech_02,tech,problem_solving,"What kind of problem do you like solving?",D,"Designing structures or systems",design,1
+tech_03,tech,learning_method,"How do you prefer to learn?",A,"Hands-on experiments or labs",lab_sciences,1
+tech_03,tech,learning_method,"How do you prefer to learn?",B,"Coding on a computer",programming,1
+tech_03,tech,learning_method,"How do you prefer to learn?",C,"Working in the field (farms, labs)",field_work,1
+tech_03,tech,learning_method,"How do you prefer to learn?",D,"Building or prototyping",engineering,1
+tech_04,tech,work_environment,"What career setting feels right to you?",A,"Software company or tech startup",software,1
+tech_04,tech,work_environment,"What career setting feels right to you?",B,"Manufacturing or engineering firm",engineering,1
+tech_04,tech,work_environment,"What career setting feels right to you?",C,"Research lab or agricultural institute",research,1
+tech_04,tech,work_environment,"What career setting feels right to you?",D,"Construction or design firms",construction,1
+tech_05,tech,analytical_ability,"How would you describe your analytical ability?",A,"Strong with data and coding logic",data_science,1
+tech_05,tech,analytical_ability,"How would you describe your analytical ability?",B,"Excellent at troubleshooting and mechanics",mechanical,1
+tech_05,tech,analytical_ability,"How would you describe your analytical ability?",C,"Great at understanding biological systems",biology,1
+tech_05,tech,analytical_ability,"How would you describe your analytical ability?",D,"Skilled in spatial reasoning and design",architecture,1
+business_01,business,project_type,"Which type of project excites you most?",A,"Starting or running a small business",entrepreneurship,1
+business_01,business,project_type,"Which type of project excites you most?",B,"Managing teams or departments",management,1
+business_01,business,project_type,"Which type of project excites you most?",C,"Creating marketing or sales campaigns",marketing,1
+business_01,business,project_type,"Which type of project excites you most?",D,"Financial planning and analysis",finance,1
+business_02,business,work_preference,"How do you prefer to work?",A,"Independently—own business or freelancing",entrepreneurship,1
+business_02,business,work_preference,"How do you prefer to work?",B,"Leading groups or coordinating tasks",management,1
+business_02,business,work_preference,"How do you prefer to work?",C,"Designing promotions and outreach",marketing,1
+business_02,business,work_preference,"How do you prefer to work?",D,"Analyzing budgets and financial reports",accounting,1
+business_03,business,learning_approach,"Best way to learn by doing is...",A,"Running a small venture or side-hustle",business_studies,1
+business_03,business,learning_approach,"Best way to learn by doing is...",B,"Leading a group project or club",project_management,1
+business_03,business,learning_approach,"Best way to learn by doing is...",C,"Designing an ad or pitching a product",marketing,1
+business_03,business,learning_approach,"Best way to learn by doing is...",D,"Preparing budgets or looking at numbers",finance,1
+business_04,business,leadership_style,"What type of boss would suit you?",A,"You're your own boss",entrepreneurship,1
+business_04,business,leadership_style,"What type of boss would suit you?",B,"A leader overseeing team performance",management,1
+business_04,business,leadership_style,"What type of boss would suit you?",C,"A creative director or brand manager",marketing,1
+business_04,business,leadership_style,"What type of boss would suit you?",D,"A finance controller or CFO-type figure",finance,1
+business_05,business,college_interest,"Which college faculty interests you?",A,"Entrepreneurship or Business Studies",business_admin,1
+business_05,business,college_interest,"Which college faculty interests you?",B,"Management or Project Management",management,1
+business_05,business,college_interest,"Which college faculty interests you?",C,"Marketing, Advertising or Mass Comm.",marketing,1
+business_05,business,college_interest,"Which college faculty interests you?",D,"Accounting, Finance or Economics",accounting,1
+arts_01,arts,creative_medium,"Which creative activity energizes you most?",A,"Drawing, painting, visual design",visual_arts,1
+arts_01,arts,creative_medium,"Which creative activity energizes you most?",B,"Writing stories, blogs, scripts",writing,1
+arts_01,arts,creative_medium,"Which creative activity energizes you most?",C,"Singing, playing music, performing",performing_arts,1
+arts_01,arts,creative_medium,"Which creative activity energizes you most?",D,"Designing clothes, textiles, craft",fashion_design,1
+arts_02,arts,communication_style,"How do you prefer to communicate your ideas?",A,"Visual: images, layouts, graphics",graphic_design,1
+arts_02,arts,communication_style,"How do you prefer to communicate your ideas?",B,"Words: written or spoken storytelling",journalism,1
+arts_02,arts,communication_style,"How do you prefer to communicate your ideas?",C,"Audio/performance: singing, acting",theatre_arts,1
+arts_02,arts,communication_style,"How do you prefer to communicate your ideas?",D,"Style: fashion, craftsmanship, styling",fashion,1
+arts_03,arts,work_environment,"Where would you feel most comfortable working?",A,"Design studio or digital lab",digital_design,1
+arts_03,arts,work_environment,"Where would you feel most comfortable working?",B,"Media house, newsroom, or blog platform",media,1
+arts_03,arts,work_environment,"Where would you feel most comfortable working?",C,"Music studio, theatre, film set",entertainment,1
+arts_03,arts,work_environment,"Where would you feel most comfortable working?",D,"Fashion studio, atelier, craft workshop",fashion,1
+arts_04,arts,subject_enjoyment,"Which school subject did you enjoy most?",A,"Fine Art, Visual Art, or Technical Drawing",fine_arts,1
+arts_04,arts,subject_enjoyment,"Which school subject did you enjoy most?",B,"English Language or Literature",literature,1
+arts_04,arts,subject_enjoyment,"Which school subject did you enjoy most?",C,"Music, Drama, or Theatre Arts",performing_arts,1
+arts_04,arts,subject_enjoyment,"Which school subject did you enjoy most?",D,"Home Economics or Technical Craft Arts",craft_arts,1
+arts_05,arts,creative_strength,"What kind of creativity are you best at?",A,"Visual and spatial (design, illustration)",visual_design,1
+arts_05,arts,creative_strength,"What kind of creativity are you best at?",B,"Language and storytelling (writing, blogging)",creative_writing,1
+arts_05,arts,creative_strength,"What kind of creativity are you best at?",C,"Performing arts and music",music_theatre,1
+arts_05,arts,creative_strength,"What kind of creativity are you best at?",D,"Fabric, fashion, design, craft",fashion_craft,1
+health_01,health,helping_preference,"Which activity do you most enjoy?",A,"Helping others learn or grow (teaching)",education,1
+health_01,health,helping_preference,"Which activity do you most enjoy?",B,"Caring for people's health (nursing, medicine)",healthcare,1
+health_01,health,helping_preference,"Which activity do you most enjoy?",C,"Listening and supporting others (counseling)",counseling,1
+health_01,health,helping_preference,"Which activity do you most enjoy?",D,"Planning community health or social programs",public_health,1
+health_02,health,learning_approach,"How do you prefer to learn?",A,"Reading and teaching",education,1
+health_02,health,learning_approach,"How do you prefer to learn?",B,"Practical care or lab-based tasks",medical,1
+health_02,health,learning_approach,"How do you prefer to learn?",C,"Conversation and empathy-based work",psychology,1
+health_02,health,learning_approach,"How do you prefer to learn?",D,"Planning health initiatives or policies",public_health,1
+health_03,health,subject_interest,"Which school subject interests you most?",A,"English or Education-related subjects",education,1
+health_03,health,subject_interest,"Which school subject interests you most?",B,"Biology, Chemistry, Health Sciences",medicine,1
+health_03,health,subject_interest,"Which school subject interests you most?",C,"Psychology, Economics, Literature",social_sciences,1
+health_03,health,subject_interest,"Which school subject interests you most?",D,"Government, Sociology, Civic Education",social_work,1
+health_04,health,helping_scenario,"In a helping scenario, you'd...",A,"Teach or educate a group about wellness",health_education,1
+health_04,health,helping_scenario,"In a helping scenario, you'd...",B,"Examine or treat individuals",clinical_medicine,1
+health_04,health,helping_scenario,"In a helping scenario, you'd...",C,"Support emotionally or psychologically",counseling,1
+health_04,health,helping_scenario,"In a helping scenario, you'd...",D,"Advocate for community health or policy",public_health,1
+health_05,health,work_motivation,"What motivates you at work?",A,"Seeing students or people learn",teaching,1
+health_05,health,work_motivation,"What motivates you at work?",B,"Healing, treating, or improving health",medicine,1
+health_05,health,work_motivation,"What motivates you at work?",C,"Providing support and counseling",therapy,1
+health_05,health,work_motivation,"What motivates you at work?",D,"Improving systems or public health",health_policy,1
+final_tech_01,final,specialization,"Do you prefer programming, hardware engineering, or scientific research?",A,"Programming and software development",computer_science,2
+final_tech_01,final,specialization,"Do you prefer programming, hardware engineering, or scientific research?",B,"Hardware and electrical systems",electrical_engineering,2
+final_tech_01,final,specialization,"Do you prefer programming, hardware engineering, or scientific research?",C,"Scientific research and experimentation",research_science,2
+final_tech_01,final,specialization,"Do you prefer programming, hardware engineering, or scientific research?",D,"Applied technology and innovation",applied_tech,2
+final_tech_02,final,work_type,"Are you more comfortable working with software tools or physical systems?",A,"Software development and applications",software_engineering,2
+final_tech_02,final,work_type,"Are you more comfortable working with software tools or physical systems?",B,"Physical systems and machinery",mechanical_engineering,2
+final_tech_02,final,work_type,"Are you more comfortable working with software tools or physical systems?",C,"Both software and hardware integration",systems_engineering,2
+final_tech_02,final,work_type,"Are you more comfortable working with software tools or physical systems?",D,"Emerging technologies and AI",ai_technology,2
+final_business_01,final,business_focus,"Do you lean toward starting your own business or growing within a company?",A,"Starting my own business",entrepreneurship,2
+final_business_01,final,business_focus,"Do you lean toward starting your own business or growing within a company?",B,"Growing within established companies",corporate_management,2
+final_business_01,final,business_focus,"Do you lean toward starting your own business or growing within a company?",C,"Consulting and advisory roles",business_consulting,2
+final_business_01,final,business_focus,"Do you lean toward starting your own business or growing within a company?",D,"Freelance and project-based work",freelance_business,2
+final_business_02,final,specialization,"Do you prefer roles in marketing, finance, operations, or consulting?",A,"Marketing and brand management",marketing,2
+final_business_02,final,specialization,"Do you prefer roles in marketing, finance, operations, or consulting?",B,"Finance and investment analysis",finance,2
+final_business_02,final,specialization,"Do you prefer roles in marketing, finance, operations, or consulting?",C,"Operations and supply chain management",operations,2
+final_business_02,final,specialization,"Do you prefer roles in marketing, finance, operations, or consulting?",D,"Strategy consulting and advisory",consulting,2
+final_arts_01,final,arts_focus,"Do you prefer digital design, traditional media, or performance arts?",A,"Digital design and UI/UX",digital_design,2
+final_arts_01,final,arts_focus,"Do you prefer digital design, traditional media, or performance arts?",B,"Traditional media and print",traditional_media,2
+final_arts_01,final,arts_focus,"Do you prefer digital design, traditional media, or performance arts?",C,"Performance and live arts",performing_arts,2
+final_arts_01,final,arts_focus,"Do you prefer digital design, traditional media, or performance arts?",D,"Mixed media and experimental arts",experimental_arts,2
+final_arts_02,final,career_path,"Do you see yourself freelancing, working for media companies, or self-publishing?",A,"Freelancing and independent projects",freelance_arts,2
+final_arts_02,final,career_path,"Do you see yourself freelancing, working for media companies, or self-publishing?",B,"Working for established media companies",media_corporate,2
+final_arts_02,final,career_path,"Do you see yourself freelancing, working for media companies, or self-publishing?",C,"Self-publishing and content creation",content_creation,2
+final_arts_02,final,career_path,"Do you see yourself freelancing, working for media companies, or self-publishing?",D,"Teaching and arts education",arts_education,2
+final_health_01,final,health_focus,"Would you like clinical roles (doctor, nurse) or community services?",A,"Clinical medicine and patient care",medicine,2
+final_health_01,final,health_focus,"Would you like clinical roles (doctor, nurse) or community services?",B,"Nursing and bedside care",nursing,2
+final_health_01,final,health_focus,"Would you like clinical roles (doctor, nurse) or community services?",C,"Community health and outreach",community_health,2
+final_health_01,final,health_focus,"Would you like clinical roles (doctor, nurse) or community services?",D,"Health research and policy",health_research,2
+final_health_02,final,service_type,"Do you prefer teaching, counseling, administration, or direct patient care?",A,"Teaching and health education",health_education,2
+final_health_02,final,service_type,"Do you prefer teaching, counseling, administration, or direct patient care?",B,"Counseling and mental health support",counseling_psychology,2
+final_health_02,final,service_type,"Do you prefer teaching, counseling, administration, or direct patient care?",C,"Healthcare administration and management",health_admin,2
+final_health_02,final,service_type,"Do you prefer teaching, counseling, administration, or direct patient care?",D,"Direct patient care and treatment",clinical_care,2 
