@@ -1,5 +1,6 @@
 import Image from "next/image"
 import Marquee from "react-fast-marquee"
+import { Button } from "../ui/button"
 
 // Partner data with logos
 const partnersData = [
@@ -53,6 +54,14 @@ export default function Partners() {
             ))}
           </Marquee>
         </div>
+
+        <div className="text-center mt-20">
+          <h3 className="text-3xl font-bold text-center mb-4">EduMeAI</h3>
+          <p className="text-lg text-gray-600 uppercase tracking-wider mb-6">COMPLETE LEARNING SOLUTION</p>
+          <Button className="bg-black hover:bg-black/80 text-white px-8 py-3 rounded-full text-lg">
+            Try EduMeAI now
+          </Button>
+        </div> 
       </div>
     </section>
   )
