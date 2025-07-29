@@ -113,9 +113,8 @@ export default function Hero() {
       </Head>
       
       <section className="relative bg-white py-20 overflow-hidden font-['Montserrat']">
-        {/* Dynamic animated gradient */}
-  
-        
+   
+          
         <div className="max-w-7xl mx-auto z-[800] px-4 sm:px-6 lg:px-8 relative z-10">
           {/* Centered Content */}
 
@@ -127,8 +126,8 @@ export default function Hero() {
                   sentence="AI"
                   manualMode={false}
                   blurAmount={0}
-                  borderColor="red"
-                  glowColor="rgba(255, 0, 0, 0.6)"
+                  borderColor="#ff3e00"
+                  glowColor="rgba(255, 62, 0, 0.6)"
                   animationDuration={0.5}
                   pauseBetweenAnimations={2}
                   blinkPointer={true}
@@ -139,10 +138,10 @@ export default function Hero() {
             <p className="text-lg md:text-2xl text-gray-500 mb-10 mx-auto max-w-2xl font-medium tracking-wide [text-shadow:_0_1px_1px_rgba(255,255,255,0.5)]">
               <TextType
                 text = {[
-                "Curated for your rhythm. Built with care.",
-                "Inspired by your journey. Designed to grow with you.",
-                "Understands your flow. Adapts to your mind.",
-                "More than smart. It's made for how you think."
+                "Personalized AI tutors that adapt to your learning style.",
+                "Interactive avatars that guide you through complex topics.",
+                "Smart study paths tailored to your unique learning journey.",
+                "Virtual companions that make learning engaging and effective."
               ]}
                 as="span"
                 className="text-type text-gray-500"

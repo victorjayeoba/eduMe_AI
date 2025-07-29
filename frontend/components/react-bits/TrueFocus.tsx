@@ -21,6 +21,7 @@ const TrueFocus = ({
   glowColor = "rgba(0, 255, 0, 0.6)",
   animationDuration = 0.5,
   pauseBetweenAnimations = 1,
+  blinkPointer = false,
 }: TrueFocusProps) => {
   const words = sentence.split(" ");
   const [currentIndex, setCurrentIndex] = useState<number>(0);
@@ -28,6 +29,7 @@ const TrueFocus = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const wordRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const [focusRect, setFocusRect] = useState({ x: 0, y: 0, width: 0, height: 0 });
+  const [isBlinking, setIsBlinking] = useState(false);
 
   useEffect(() => {
     if (!manualMode) {
@@ -38,6 +40,17 @@ const TrueFocus = ({
       return () => clearInterval(interval);
     }
   }, [manualMode, animationDuration, pauseBetweenAnimations, words.length]);
+
+  // Blink effect for focus frame
+  useEffect(() => {
+    if (!blinkPointer) return;
+    
+    const blinkInterval = setInterval(() => {
+      setIsBlinking(prev => !prev);
+    }, 500); // Blink every 500ms
+    
+    return () => clearInterval(blinkInterval);
+  }, [blinkPointer]);
 
   useEffect(() => {
     if (currentIndex === null || currentIndex === -1) return;
@@ -105,13 +118,13 @@ const TrueFocus = ({
       })}
 
       <motion.div
-        className="focus-frame"
+        className={`focus-frame ${blinkPointer && isBlinking ? 'opacity-50' : 'opacity-100'}`}
         animate={{
           x: focusRect.x,
           y: focusRect.y,
           width: focusRect.width,
           height: focusRect.height,
-          opacity: currentIndex >= 0 ? 1 : 0,
+          opacity: currentIndex >= 0 ? (blinkPointer ? (isBlinking ? 0.3 : 1) : 1) : 0,
         }}
         transition={{
           duration: animationDuration,
