@@ -1,10 +1,10 @@
  "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import {
   Home,
   Video,
@@ -15,56 +15,222 @@ import {
   Settings,
   LogOut,
   ChevronRight,
-  Plus,
-  CheckCircle2,
-  Circle,
-  ChevronLeft,
-  ArrowRight,
-  Briefcase,
-  GraduationCap as GradCap,
-  Building2,
-  BookOpen as Book,
   Menu,
   X,
+  Brain,
+  TrendingUp,
+  School,
   BarChart3,
+  Search,
+  ArrowRight,
+  Check,
+  ChevronDown,
 } from "lucide-react"
+import { QuizProvider, useQuiz } from '@/contexts/quiz-context'
+import { QuestionCard } from '@/components/career-quiz/QuestionCard'
+import { ResultsPage } from '@/components/career-quiz/ResultsPage'
+import { quizQuestions } from '@/lib/quiz-data'
 import { Input } from "@/components/ui/input"
+
+function QuizContent() {
+  const { state, addAnswer, nextStep, calculateDominantInterest } = useQuiz();
+  const [currentQuestions, setCurrentQuestions] = useState(
+    quizQuestions.filter(q => q.batch === 'core')
+  );
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+
+  useEffect(() => {
+    // Update questions based on current branch
+    if (state.currentBranch === 'core') {
+      setCurrentQuestions(quizQuestions.filter(q => q.batch === 'core'));
+    } else {
+      const branchQuestions = quizQuestions.filter(q => q.batch === state.currentBranch);
+      setCurrentQuestions(branchQuestions);
+      setCurrentQuestionIndex(0);
+    }
+  }, [state.currentBranch]);
+
+  const handleAnswer = (optionCode: 'A' | 'B' | 'C' | 'D', optionText: string) => {
+    const currentQuestion = currentQuestions[currentQuestionIndex];
+    
+    addAnswer({
+      questionId: currentQuestion.id,
+      selectedOption: optionText,
+      optionCode
+    });
+
+    // Check if we finished core questions
+    if (state.currentBranch === 'core' && currentQuestionIndex >= currentQuestions.length - 1) {
+      calculateDominantInterest();
+      return;
+    }
+
+    // Move to next question or complete branch
+    if (currentQuestionIndex < currentQuestions.length - 1) {
+      setCurrentQuestionIndex(prev => prev + 1);
+    } else {
+      // Branch completed - should show results
+      nextStep();
+    }
+  };
+
+  // Show results if we have enough answers
+  if (state.answers.length >= 12) {
+    return <ResultsPage />;
+  }
+
+  const currentQuestion = currentQuestions[currentQuestionIndex];
+  
+  if (!currentQuestion) {
+    return (
+      <div className="flex justify-center items-center py-12">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading next questions...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <QuestionCard
+      question={currentQuestion}
+      questionNumber={state.answers.length + 1}
+      totalQuestions={15}
+      onAnswer={handleAnswer}
+    />
+  );
+}
+
+function QuizIntro({ onStart }: { onStart: () => void }) {
+  return (
+    <div className="max-w-4xl mx-auto">
+      <div className="text-center mb-8">
+        <h2 className="text-3xl font-bold text-gray-900 mb-4">
+          🎯 Discover Your Ideal Career Path
+        </h2>
+        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          Take our comprehensive career assessment designed specifically for Nigerian students. 
+          Get personalized course recommendations, admission likelihood, and salary expectations.
+        </p>
+      </div>
+
+      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <Card className="text-center border-0 shadow-sm hover:shadow-md transition-shadow">
+          <CardHeader className="pb-3">
+            <Brain className="w-8 h-8 mx-auto text-blue-600 mb-2" />
+            <CardTitle className="text-lg">Smart Assessment</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-gray-600">
+              AI-powered branching quiz that adapts to your responses
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="text-center border-0 shadow-sm hover:shadow-md transition-shadow">
+          <CardHeader className="pb-3">
+            <Target className="w-8 h-8 mx-auto text-green-600 mb-2" />
+            <CardTitle className="text-lg">Personalized Results</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-gray-600">
+              Tailored course and career recommendations based on your interests
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="text-center border-0 shadow-sm hover:shadow-md transition-shadow">
+          <CardHeader className="pb-3">
+            <School className="w-8 h-8 mx-auto text-purple-600 mb-2" />
+            <CardTitle className="text-lg">Nigerian Context</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-gray-600">
+              Aligned with JAMB, Nigerian universities, and local job market
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="text-center border-0 shadow-sm hover:shadow-md transition-shadow">
+          <CardHeader className="pb-3">
+            <TrendingUp className="w-8 h-8 mx-auto text-orange-600 mb-2" />
+            <CardTitle className="text-lg">Admission Insights</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-gray-600">
+              Realistic admission chances and salary expectations
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Card className="bg-gradient-to-r from-blue-50 to-purple-50 border-0 shadow-sm mb-8">
+        <CardContent className="p-6">
+          <h3 className="text-lg font-semibold mb-4">What You'll Get:</h3>
+          <div className="grid md:grid-cols-2 gap-4 text-sm">
+            <div className="space-y-3">
+              <div className="flex items-center space-x-2">
+                <Check className="h-5 w-5 text-blue-600" />
+                <span>Personalized course recommendations</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Check className="h-5 w-5 text-green-600" />
+                <span>Institution fit analysis (Federal/State/Private/Abroad)</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Check className="h-5 w-5 text-purple-600" />
+                <span>Admission likelihood assessment</span>
+              </div>
+            </div>
+            <div className="space-y-3">
+              <div className="flex items-center space-x-2">
+                <Check className="h-5 w-5 text-orange-600" />
+                <span>Expected salary ranges</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Check className="h-5 w-5 text-red-600" />
+                <span>Career pathway guidance</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Check className="h-5 w-5 text-indigo-600" />
+                <span>Skills development recommendations</span>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <div className="text-center">
+        <Button 
+          onClick={onStart}
+          size="lg"
+          className="px-8 py-6 text-lg bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-md hover:shadow-lg transition-all"
+        >
+          Start Your Career Assessment
+          <ArrowRight className="ml-2 h-5 w-5" />
+        </Button>
+        <p className="text-sm text-gray-500 mt-4">
+          ⏱️ Takes about 5-7 minutes • 📊 ~12-15 questions via smart branching
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function CareerGuideContent() {
+  const [showIntro, setShowIntro] = useState(true);
+
+  if (showIntro) {
+    return <QuizIntro onStart={() => setShowIntro(false)} />;
+  }
+
+  return <QuizContent />;
+}
 
 export default function CareerGuide() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
-  const [currentStep, setCurrentStep] = useState(1)
-  const [selectedOptions, setSelectedOptions] = useState<Record<string, string[]>>({
-    interests: [],
-    subjects: [],
-    skills: [],
-    values: []
-  })
-  
-  const totalSteps = 5
-  
-  const handleOptionToggle = (category: string, option: string) => {
-    setSelectedOptions(prev => {
-      const current = [...(prev[category] || [])]
-      if (current.includes(option)) {
-        return { ...prev, [category]: current.filter(item => item !== option) }
-      } else {
-        return { ...prev, [category]: [...current, option] }
-      }
-    })
-  }
-  
-  const nextStep = () => {
-    if (currentStep < totalSteps) {
-      setCurrentStep(currentStep + 1)
-    }
-  }
-  
-  const prevStep = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1)
-    }
-  }
 
   return (
     <div className="flex min-h-screen bg-gray-50">
@@ -161,6 +327,13 @@ export default function CareerGuide() {
               <Award className="h-5 w-5" />
               {!isSidebarCollapsed && <span className="ml-3 font-medium">Rewards</span>}
             </Link>
+            <Link
+              href="/dashboard/resources"
+              className="flex items-center px-4 py-3 text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              <BookOpen className="h-5 w-5" />
+              {!isSidebarCollapsed && <span className="ml-3 font-medium">Resources</span>}
+            </Link>
           </div>
 
           <div className="mt-10 pt-6 border-t border-gray-200">
@@ -184,354 +357,13 @@ export default function CareerGuide() {
 
       {/* Main Content */}
       <div className={`flex-1 transition-all duration-300 ${isSidebarCollapsed ? "md:ml-20" : "md:ml-64"}`}>
-        {/* Header */}
-        <header className="bg-white shadow-sm">
-          <div className="flex items-center justify-between h-16 px-4 md:px-6">
-            <h1 className="text-xl font-bold text-gray-900 ml-10 md:ml-0">Career Guide</h1>
-            <div className="flex items-center space-x-4">
-              {/* Streak Indicator */}
-              <div className="hidden md:flex items-center bg-amber-50 border border-amber-200 rounded-full px-3 py-1">
-                <Award className="h-4 w-4 text-amber-500 mr-2" />
-                <span className="text-sm font-medium text-amber-700">7 Day Streak</span>
-                <div className="flex space-x-1 ml-2">
-                  {[...Array(7)].map((_, i) => (
-                    <div key={i} className="w-1.5 h-1.5 rounded-full bg-amber-400" />
-                  ))}
-                </div>
-              </div>
-              <div className="relative">
-                <div className="h-9 w-9 rounded-full bg-gray-200 flex items-center justify-center">
-                  <span className="font-medium text-sm">JD</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </header>
+        {/* Header is now in the layout */}
 
         {/* Main Content */}
         <main className="px-4 py-6 md:px-6">
-          <div className="max-w-4xl mx-auto">
-            {/* Progress Indicator */}
-            <div className="mb-8">
-              <div className="flex items-center justify-between mb-2">
-                <h2 className="text-xl font-bold">Career Pathfinder</h2>
-                <span className="text-sm text-gray-500">Step {currentStep} of {totalSteps}</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                {[...Array(totalSteps)].map((_, i) => (
-                  <div 
-                    key={i} 
-                    className={`flex-1 h-1.5 rounded-full ${i + 1 <= currentStep ? 'bg-black' : 'bg-gray-200'}`}
-                  />
-                ))}
-              </div>
-            </div>
-
-            {/* Step Content */}
-            <Card className="mb-6">
-              <CardContent className="p-6">
-                {currentStep === 1 && (
-                  <div>
-                    <h3 className="text-xl font-semibold mb-4">What are your interests?</h3>
-                    <p className="text-gray-600 mb-6">Select all that apply to you. This helps us understand what careers might align with your passions.</p>
-                    
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                      {['Technology', 'Science', 'Arts', 'Business', 'Healthcare', 'Education', 'Engineering', 'Environment', 'Media'].map((interest) => (
-                        <button
-                          key={interest}
-                          className={`p-3 rounded-lg border text-left transition-all ${
-                            selectedOptions.interests.includes(interest) 
-                              ? 'bg-black text-white border-black' 
-                              : 'bg-white hover:bg-gray-50 border-gray-200'
-                          }`}
-                          onClick={() => handleOptionToggle('interests', interest)}
-                        >
-                          <div className="flex items-center">
-                            {selectedOptions.interests.includes(interest) ? (
-                              <CheckCircle2 className="h-5 w-5 mr-2 flex-shrink-0" />
-                            ) : (
-                              <Circle className="h-5 w-5 mr-2 flex-shrink-0" />
-                            )}
-                            <span>{interest}</span>
-                          </div>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {currentStep === 2 && (
-                  <div>
-                    <h3 className="text-xl font-semibold mb-4">Which subjects do you enjoy?</h3>
-                    <p className="text-gray-600 mb-6">Select the subjects you find most engaging or perform well in.</p>
-                    
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                      {['Mathematics', 'Physics', 'Chemistry', 'Biology', 'History', 'Literature', 'Languages', 'Computer Science', 'Economics', 'Psychology', 'Art', 'Music'].map((subject) => (
-                        <button
-                          key={subject}
-                          className={`p-3 rounded-lg border text-left transition-all ${
-                            selectedOptions.subjects.includes(subject) 
-                              ? 'bg-black text-white border-black' 
-                              : 'bg-white hover:bg-gray-50 border-gray-200'
-                          }`}
-                          onClick={() => handleOptionToggle('subjects', subject)}
-                        >
-                          <div className="flex items-center">
-                            {selectedOptions.subjects.includes(subject) ? (
-                              <CheckCircle2 className="h-5 w-5 mr-2 flex-shrink-0" />
-                            ) : (
-                              <Circle className="h-5 w-5 mr-2 flex-shrink-0" />
-                            )}
-                            <span>{subject}</span>
-                          </div>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {currentStep === 3 && (
-                  <div>
-                    <h3 className="text-xl font-semibold mb-4">What skills are you good at?</h3>
-                    <p className="text-gray-600 mb-6">Select the skills you believe are your strengths.</p>
-                    
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                      {['Problem Solving', 'Communication', 'Creativity', 'Leadership', 'Analytical Thinking', 'Organization', 'Teamwork', 'Technical Skills', 'Writing', 'Research', 'Public Speaking', 'Critical Thinking'].map((skill) => (
-                        <button
-                          key={skill}
-                          className={`p-3 rounded-lg border text-left transition-all ${
-                            selectedOptions.skills.includes(skill) 
-                              ? 'bg-black text-white border-black' 
-                              : 'bg-white hover:bg-gray-50 border-gray-200'
-                          }`}
-                          onClick={() => handleOptionToggle('skills', skill)}
-                        >
-                          <div className="flex items-center">
-                            {selectedOptions.skills.includes(skill) ? (
-                              <CheckCircle2 className="h-5 w-5 mr-2 flex-shrink-0" />
-                            ) : (
-                              <Circle className="h-5 w-5 mr-2 flex-shrink-0" />
-                            )}
-                            <span>{skill}</span>
-                          </div>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {currentStep === 4 && (
-                  <div>
-                    <h3 className="text-xl font-semibold mb-4">What values are important to you?</h3>
-                    <p className="text-gray-600 mb-6">Select the values that matter most in your future career.</p>
-                    
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                      {['Work-Life Balance', 'High Income', 'Making a Difference', 'Recognition', 'Independence', 'Security', 'Innovation', 'Helping Others', 'Adventure', 'Creativity', 'Leadership', 'Growth'].map((value) => (
-                        <button
-                          key={value}
-                          className={`p-3 rounded-lg border text-left transition-all ${
-                            selectedOptions.values.includes(value) 
-                              ? 'bg-black text-white border-black' 
-                              : 'bg-white hover:bg-gray-50 border-gray-200'
-                          }`}
-                          onClick={() => handleOptionToggle('values', value)}
-                        >
-                          <div className="flex items-center">
-                            {selectedOptions.values.includes(value) ? (
-                              <CheckCircle2 className="h-5 w-5 mr-2 flex-shrink-0" />
-                            ) : (
-                              <Circle className="h-5 w-5 mr-2 flex-shrink-0" />
-                            )}
-                            <span>{value}</span>
-                          </div>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {currentStep === 5 && (
-                  <div>
-                    <h3 className="text-xl font-semibold mb-4">Your Career Matches</h3>
-                    <p className="text-gray-600 mb-6">Based on your responses, these careers might be a good fit for you.</p>
-                    
-                    <div className="space-y-4">
-                      <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                        <div className="flex items-start">
-                          <div className="bg-blue-100 p-2 rounded-lg mr-4">
-                            <Briefcase className="h-6 w-6 text-blue-600" />
-                          </div>
-                          <div>
-                            <h4 className="font-semibold text-lg">Software Engineer</h4>
-                            <p className="text-gray-600 text-sm mb-2">Design, develop, and maintain software systems and applications</p>
-                            <div className="flex flex-wrap gap-2">
-                              <span className="bg-blue-50 text-blue-700 text-xs px-2 py-1 rounded-full">Technology</span>
-                              <span className="bg-blue-50 text-blue-700 text-xs px-2 py-1 rounded-full">Problem Solving</span>
-                              <span className="bg-blue-50 text-blue-700 text-xs px-2 py-1 rounded-full">Mathematics</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                        <div className="flex items-start">
-                          <div className="bg-green-100 p-2 rounded-lg mr-4">
-                            <GradCap className="h-6 w-6 text-green-600" />
-                          </div>
-                          <div>
-                            <h4 className="font-semibold text-lg">Research Scientist</h4>
-                            <p className="text-gray-600 text-sm mb-2">Conduct research to advance knowledge in a specific field</p>
-                            <div className="flex flex-wrap gap-2">
-                              <span className="bg-green-50 text-green-700 text-xs px-2 py-1 rounded-full">Science</span>
-                              <span className="bg-green-50 text-green-700 text-xs px-2 py-1 rounded-full">Analytical Thinking</span>
-                              <span className="bg-green-50 text-green-700 text-xs px-2 py-1 rounded-full">Research</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                        <div className="flex items-start">
-                          <div className="bg-purple-100 p-2 rounded-lg mr-4">
-                            <Building2 className="h-6 w-6 text-purple-600" />
-                          </div>
-                          <div>
-                            <h4 className="font-semibold text-lg">Product Manager</h4>
-                            <p className="text-gray-600 text-sm mb-2">Lead the development of products from conception to launch</p>
-                            <div className="flex flex-wrap gap-2">
-                              <span className="bg-purple-50 text-purple-700 text-xs px-2 py-1 rounded-full">Business</span>
-                              <span className="bg-purple-50 text-purple-700 text-xs px-2 py-1 rounded-full">Leadership</span>
-                              <span className="bg-purple-50 text-purple-700 text-xs px-2 py-1 rounded-full">Communication</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="mt-6 bg-black/5 p-4 rounded-lg">
-                      <div className="flex items-center">
-                        <Book className="h-5 w-5 text-black mr-2" />
-                        <h4 className="font-medium">Next Steps</h4>
-                      </div>
-                      <p className="text-sm mt-2">
-                        Book a session with a career counselor to explore these options in depth and create a personalized education plan.
-                      </p>
-                      <Button className="mt-3 bg-black hover:bg-black/80">
-                        Schedule Consultation
-                      </Button>
-                    </div>
-                  </div>
-                )}
-              </CardContent>
-              
-              <CardFooter className="px-6 py-4 border-t flex justify-between">
-                <Button 
-                  variant="outline" 
-                  onClick={prevStep}
-                  disabled={currentStep === 1}
-                >
-                  <ChevronLeft className="h-4 w-4 mr-2" />
-                  Previous
-                </Button>
-                
-                <Button 
-                  onClick={currentStep === totalSteps ? () => {} : nextStep}
-                  className={currentStep === totalSteps ? "bg-green-600 hover:bg-green-700" : "bg-black hover:bg-black/80"}
-                >
-                  {currentStep === totalSteps ? (
-                    <>
-                      Save Results
-                      <CheckCircle2 className="h-4 w-4 ml-2" />
-                    </>
-                  ) : (
-                    <>
-                      Continue
-                      <ArrowRight className="h-4 w-4 ml-2" />
-                    </>
-                  )}
-                </Button>
-              </CardFooter>
-            </Card>
-
-            {/* Additional Resources */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Career Insights</CardTitle>
-                  <CardDescription>Learn more about potential career paths</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex items-center p-2 hover:bg-gray-50 rounded-lg transition-colors">
-                    <div className="h-10 w-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
-                      <BarChart3 className="h-5 w-5 text-blue-600" />
-                    </div>
-                    <div>
-                      <h4 className="font-medium">Salary & Job Outlook</h4>
-                      <p className="text-sm text-gray-500">Compare compensation and growth potential</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center p-2 hover:bg-gray-50 rounded-lg transition-colors">
-                    <div className="h-10 w-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
-                      <GradCap className="h-5 w-5 text-green-600" />
-                    </div>
-                    <div>
-                      <h4 className="font-medium">Education Requirements</h4>
-                      <p className="text-sm text-gray-500">Understand necessary qualifications</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center p-2 hover:bg-gray-50 rounded-lg transition-colors">
-                    <div className="h-10 w-10 bg-amber-100 rounded-lg flex items-center justify-center mr-3">
-                      <Briefcase className="h-5 w-5 text-amber-600" />
-                    </div>
-                    <div>
-                      <h4 className="font-medium">Day in the Life</h4>
-                      <p className="text-sm text-gray-500">See what professionals actually do</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Recommended Programs</CardTitle>
-                  <CardDescription>Educational paths aligned with your interests</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex items-center p-2 hover:bg-gray-50 rounded-lg transition-colors">
-                    <div className="h-10 w-10 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
-                      <Book className="h-5 w-5 text-purple-600" />
-                    </div>
-                    <div>
-                      <h4 className="font-medium">Computer Science</h4>
-                      <p className="text-sm text-gray-500">Bachelor's Degree • 4 years</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center p-2 hover:bg-gray-50 rounded-lg transition-colors">
-                    <div className="h-10 w-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
-                      <Book className="h-5 w-5 text-blue-600" />
-                    </div>
-                    <div>
-                      <h4 className="font-medium">Data Science</h4>
-                      <p className="text-sm text-gray-500">Master's Degree • 2 years</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center p-2 hover:bg-gray-50 rounded-lg transition-colors">
-                    <div className="h-10 w-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
-                      <Book className="h-5 w-5 text-green-600" />
-                    </div>
-                    <div>
-                      <h4 className="font-medium">Product Management</h4>
-                      <p className="text-sm text-gray-500">Certificate • 6 months</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
+          <QuizProvider>
+            <CareerGuideContent />
+          </QuizProvider>
         </main>
       </div>
     </div>

@@ -1,12 +1,46 @@
+// app/dashboard/layout.tsx
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/contexts/auth-context";
 import { getAuth, sendEmailVerification } from "firebase/auth";
 import { Button } from "@/components/ui/button";
 import { AlertCircle, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { DashboardHeader } from "@/components/dashboard/header";
+
+// This wrapper component gets the page title from the current route
+function PageWithHeader({ 
+  children
+}: { 
+  children: React.ReactNode
+}) {
+  const pathname = usePathname();
+  
+  // Get page title from pathname
+  const getPageTitle = () => {
+    const path = pathname?.split('/').filter(Boolean).pop();
+    
+    if (!path || path === 'dashboard') {
+      return 'Dashboard';
+    }
+    
+    // Convert path-case to Title Case
+    return path.split('-')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  };
+  
+  return (
+    <div className="flex flex-col min-h-screen">
+      <div className="flex-1 flex flex-col">
+        <DashboardHeader title={getPageTitle()} />
+        {children}
+      </div>
+    </div>
+  );
+}
 
 export default function DashboardLayout({
   children,
@@ -117,6 +151,6 @@ export default function DashboardLayout({
     );
   }
 
-  // Render dashboard content if email is verified
-  return <>{children}</>;
-} 
+  // Render dashboard content with the header and content
+  return <PageWithHeader>{children}</PageWithHeader>;
+}

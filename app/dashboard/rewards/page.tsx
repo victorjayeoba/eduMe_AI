@@ -237,6 +237,13 @@ export default function Rewards() {
               <Award className="h-5 w-5" />
               {!isSidebarCollapsed && <span className="ml-3 font-medium">Rewards</span>}
             </Link>
+            <Link
+              href="/dashboard/resources"
+              className="flex items-center px-4 py-3 text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              <BookOpen className="h-5 w-5" />
+              {!isSidebarCollapsed && <span className="ml-3 font-medium">Resources</span>}
+            </Link>
           </div>
 
           <div className="mt-10 pt-6 border-t border-gray-200">
@@ -260,29 +267,6 @@ export default function Rewards() {
 
       {/* Main Content */}
       <div className={`flex-1 transition-all duration-300 ${isSidebarCollapsed ? "md:ml-20" : "md:ml-64"}`}>
-        {/* Header */}
-        <header className="bg-white shadow-sm">
-          <div className="flex items-center justify-between h-16 px-4 md:px-6">
-            <h1 className="text-xl font-bold text-gray-900 ml-10 md:ml-0">Rewards</h1>
-            <div className="flex items-center space-x-4">
-              {/* Streak Indicator */}
-              <div className="hidden md:flex items-center bg-amber-50 border border-amber-200 rounded-full px-3 py-1">
-                <Award className="h-4 w-4 text-amber-500 mr-2" />
-                <span className="text-sm font-medium text-amber-700">7 Day Streak</span>
-                <div className="flex space-x-1 ml-2">
-                  {[...Array(7)].map((_, i) => (
-                    <div key={i} className="w-1.5 h-1.5 rounded-full bg-amber-400" />
-                  ))}
-                </div>
-              </div>
-              <div className="relative">
-                <div className="h-9 w-9 rounded-full bg-gray-200 flex items-center justify-center">
-                  <span className="font-medium text-sm">JD</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </header>
 
         {/* Main Content */}
         <main className="px-4 py-6 md:px-6">
