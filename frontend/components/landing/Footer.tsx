@@ -10,7 +10,7 @@ export default function Footer() {
         <div className="grid md:grid-cols-4 gap-8 mb-8">
           <div>
             <div className="flex items-center mb-4">
-              <img src="/edumeai-logo.png" alt="EduMeAI Logo" className="h-8 mr-2" />
+              {/* <img src="/edumeai-logo.png" alt="EduMeAI Logo" className="h-8 mr-2" /> */}
               <div className="flex items-center space-x-0.5">
                 <span className="text-xl font-bold text-black">EduMe</span>
                 <span className="text-xl font-bold text-black bg-black/10 px-1 py-0.5 rounded-md border border-black/20">

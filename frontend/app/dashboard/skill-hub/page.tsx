@@ -43,6 +43,37 @@ export default function SkillHub() {
     { id: "soft", name: "Soft Skills", icon: <Lightbulb className="h-5 w-5" /> },
   ]
   
+  const achievements = [
+    {
+      id: 1,
+      title: "Fast Learner",
+      description: "Completed 5 modules in one day",
+      icon: <Sparkles className="h-5 w-5" />,
+      color: "amber",
+    },
+    {
+      id: 2,
+      title: "Coding Ninja",
+      description: "Completed Web Development basics",
+      icon: <Zap className="h-5 w-5" />,
+      color: "blue",
+    },
+    {
+      id: 3,
+      title: "Team Player",
+      description: "Completed Leadership module",
+      icon: <Users className="h-5 w-5" />,
+      color: "green",
+    },
+    {
+      id: 4,
+      title: "Time Master",
+      description: "Completed Time Management course",
+      icon: <Clock className="h-5 w-5" />,
+      color: "purple",
+    },
+  ]
+  
   const digitalSkills = [
     {
       id: 1,
@@ -306,11 +337,10 @@ export default function SkillHub() {
 
       {/* Main Content */}
       <div className={`flex-1 transition-all duration-300 ${isSidebarCollapsed ? "md:ml-20" : "md:ml-64"}`}>
-
         {/* Main Content */}
         <main className="px-4 py-6 md:px-6">
-          {/* Skill Category Tabs */}
-          <div className="mb-6">
+          <div className="flex flex-col md:flex-row justify-between items-start mb-6 gap-4">
+            {/* Skill Category Tabs */}
             <div className="flex space-x-2">
               {skillCategories.map((category) => (
                 <Button
@@ -324,10 +354,23 @@ export default function SkillHub() {
                 </Button>
               ))}
             </div>
+            
+            {/* Achievement Cards - Small Version */}
+            <div className="flex space-x-2 md:ml-auto order-first md:order-last">
+              {achievements.map((achievement) => (
+                <div 
+                  key={achievement.id}
+                  className={`flex items-center px-3 py-2 rounded-lg border border-gray-200 bg-${achievement.color}-50 hover:bg-${achievement.color}-100 transition-all duration-300 hover:shadow-md cursor-pointer h-9`}
+                >
+                  <span className="mr-2">{achievement.icon}</span>
+                  <h4 className="text-xs font-medium">{achievement.title}</h4>
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* Featured Skill */}
-          <Card className="mb-6 overflow-hidden">
+          {/* <Card className="mb-6 overflow-hidden">
             <div className="grid grid-cols-1 md:grid-cols-2">
               <div className="p-6">
                 <div className="flex items-center mb-4">
@@ -381,16 +424,16 @@ export default function SkillHub() {
                 </div>
               </div>
             </div>
-          </Card>
+          </Card> */}
 
           {/* All Skills */}
           <div className="mb-8">
-            <div className="flex items-center justify-between mb-4">
+            {/* <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold">All {activeCategory === "digital" ? "Digital" : "Soft"} Skills</h2>
               <Button variant="outline" size="sm">
                 View All
               </Button>
-            </div>
+            </div> */}
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {activeSkills.map((skill) => (
@@ -523,49 +566,6 @@ export default function SkillHub() {
               </CardContent>
             </Card>
           </div>
-          
-          {/* Skill Achievements */}
-          <Card className="mt-6">
-            <CardHeader>
-              <CardTitle>Your Achievements</CardTitle>
-              <CardDescription>Badges and milestones you've earned</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="flex flex-col items-center p-4 bg-gray-50 rounded-lg border border-gray-200">
-                  <div className="h-16 w-16 bg-amber-100 rounded-full flex items-center justify-center mb-3">
-                    <Sparkles className="h-8 w-8 text-amber-600" />
-                  </div>
-                  <h4 className="font-medium text-center">Fast Learner</h4>
-                  <p className="text-xs text-gray-500 text-center mt-1">Completed 5 modules in one day</p>
-                </div>
-                
-                <div className="flex flex-col items-center p-4 bg-gray-50 rounded-lg border border-gray-200">
-                  <div className="h-16 w-16 bg-blue-100 rounded-full flex items-center justify-center mb-3">
-                    <Zap className="h-8 w-8 text-blue-600" />
-                  </div>
-                  <h4 className="font-medium text-center">Coding Ninja</h4>
-                  <p className="text-xs text-gray-500 text-center mt-1">Completed Web Development basics</p>
-                </div>
-                
-                <div className="flex flex-col items-center p-4 bg-gray-50 rounded-lg border border-gray-200">
-                  <div className="h-16 w-16 bg-green-100 rounded-full flex items-center justify-center mb-3">
-                    <Users className="h-8 w-8 text-green-600" />
-                  </div>
-                  <h4 className="font-medium text-center">Team Player</h4>
-                  <p className="text-xs text-gray-500 text-center mt-1">Completed Leadership module</p>
-                </div>
-                
-                <div className="flex flex-col items-center p-4 bg-gray-50 rounded-lg border border-gray-200">
-                  <div className="h-16 w-16 bg-purple-100 rounded-full flex items-center justify-center mb-3">
-                    <Clock className="h-8 w-8 text-purple-600" />
-                  </div>
-                  <h4 className="font-medium text-center">Time Master</h4>
-                  <p className="text-xs text-gray-500 text-center mt-1">Completed Time Management course</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
         </main>
       </div>
     </div>

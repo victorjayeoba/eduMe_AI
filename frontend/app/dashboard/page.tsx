@@ -26,11 +26,20 @@ import {
   Filter,
   Menu,
   X,
+  RefreshCw,
+  Plus,
 } from "lucide-react"
 
 export default function Dashboard() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
+
+  // Sample user data - in a real app this would come from authentication context
+  const user = {
+    title: "Adedeji",
+    name: "Adedeji",
+    email: "adedeji@example.com"
+  }
 
   // Sample metrics data
   const metrics = [
@@ -39,30 +48,27 @@ export default function Dashboard() {
       value: "42.5h", 
       change: "+15%", 
       changeType: "increase", 
-      period: "This week",
       icon: Clock,
-      iconBg: "bg-blue-100", 
-      iconColor: "text-blue-600" 
+      iconBg: "bg-gray-100", 
+      iconColor: "text-gray-600" 
     },
     { 
       title: "Assignments", 
       value: "28/30", 
       change: "+8", 
       changeType: "increase", 
-      period: "This week",
       icon: Target,
-      iconBg: "bg-purple-100", 
-      iconColor: "text-purple-600" 
+      iconBg: "bg-gray-100", 
+      iconColor: "text-gray-600" 
     },
     { 
       title: "Quiz Score", 
       value: "92%", 
       change: "+5%", 
       changeType: "increase", 
-      period: "This week",
       icon: Award,
-      iconBg: "bg-amber-100", 
-      iconColor: "text-amber-600" 
+      iconBg: "bg-gray-100", 
+      iconColor: "text-gray-600" 
     }
   ]
 
@@ -75,43 +81,6 @@ export default function Dashboard() {
     { day: "Fri", hours: 5.4 },
     { day: "Sat", hours: 8.2 },
     { day: "Sun", hours: 6.9 },
-  ]
-
-  // Sample recent activities
-  const recentActivities = [
-    { 
-      id: 1,
-      title: "AI Tutoring Session",
-      subject: "Calculus",
-      time: "10:42 AM",
-      duration: "45 minutes",
-      status: "Completed",
-      icon: Video,
-      iconBg: "bg-blue-100", 
-      iconColor: "text-blue-600" 
-    },
-    { 
-      id: 2,
-      title: "Career Quiz",
-      subject: "Career Guidance",
-      time: "Yesterday",
-      duration: "15 minutes",
-      status: "Completed",
-      icon: GraduationCap,
-      iconBg: "bg-purple-100", 
-      iconColor: "text-purple-600" 
-    },
-    { 
-      id: 3,
-      title: "Practice Exam",
-      subject: "Mathematics",
-      time: "2 days ago",
-      duration: "60 minutes",
-      status: "Completed",
-      icon: BookOpen,
-      iconBg: "bg-green-100", 
-      iconColor: "text-green-600" 
-    },
   ]
 
   // Sample upcoming events
@@ -131,6 +100,17 @@ export default function Dashboard() {
       participants: 3
     },
   ]
+
+  // Get current time for last updated
+  const getCurrentTime = () => {
+    const now = new Date()
+    return now.toLocaleTimeString('en-US', { 
+      hour: 'numeric', 
+      minute: '2-digit', 
+      second: '2-digit',
+      hour12: true 
+    })
+  }
 
   return (
     <div className="flex min-h-screen bg-gray-50">
@@ -155,13 +135,13 @@ export default function Dashboard() {
         {/* Logo */}
         <div className="flex h-16 items-center justify-between px-4 border-b">
           <Link href="/" className={`flex items-center ${isSidebarCollapsed ? "justify-center" : ""}`}>
-            <div className="relative h-10 w-10 mr-2">
-              <Image
+            <div className="relative h-0 w-0 mr-0">
+              {/* <Image
                 src="/edumeai-logo.png"
                 alt="EduMeAI Logo"
                 fill
                 className="object-contain"
-              />
+              /> */}
             </div>
             {!isSidebarCollapsed && (
               <div className="flex items-center">
@@ -259,38 +239,193 @@ export default function Dashboard() {
       <main className={`flex-1 transition-all duration-300 ${isSidebarCollapsed ? "md:ml-20" : "md:ml-64"} pt-0`}>
         <div className="px-4 py-6 md:px-6">
           <div className="max-w-6xl mx-auto space-y-8">
-            {/* Key Metrics */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {metrics.map((metric, index) => {
-                const Icon = metric.icon;
-                return (
-                  <Card key={index} className="overflow-hidden border-0 shadow-sm">
+            {/* Welcome Card with Metrics */}
+            <Card className="overflow-hidden border-0 shadow-sm bg-gradient-to-r from-gray-800 to-gray-700 text-white">
               <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                        <div className={`${metric.iconBg} w-12 h-12 rounded-lg flex items-center justify-center`}>
-                          <Icon className={`h-6 w-6 ${metric.iconColor}`} />
+                <div className="flex flex-col lg:flex-row gap-6">
+                  {/* Left side - Welcome message */}
+                  <div className="lg:w-1/3 flex flex-col justify-center">
+                    <div className="mb-4">
+                      <h1 className="text-2xl font-bold mb-2">Welcome back, {user?.title || 'Student'}! 👋</h1>
+                      <p className="text-gray-300 mb-3">Ready to ace your studies today?</p>
+                      <p className="text-sm text-gray-400 mb-2">Keep pushing towards your academic goals!</p>
+                      <p className="text-xs text-gray-500">Last updated: {getCurrentTime()}</p>
+                    </div>
                   </div>
-                        <Button variant="ghost" size="icon">
-                          <MoreVertical className="h-4 w-4" />
-                        </Button>
+                  
+                  {/* Right side - Metrics and Buttons */}
+                  <div className="lg:w-2/3">
+                    {/* Metrics Grid */}
+                    <div className="grid grid-cols-3 gap-3 mb-4">
+                      {metrics.map((metric, index) => {
+                        const Icon = metric.icon;
+                        return (
+                          <div key={index} className="bg-gray-600/50 rounded-lg p-3">
+                            <div className="flex items-center justify-between mb-2">
+                              <div className={`${metric.iconBg} w-6 h-6 rounded-lg flex items-center justify-center`}>
+                                <Icon className={`h-3 w-3 ${metric.iconColor}`} />
                       </div>
-                      <div className="mt-4">
-                        <h2 className="text-3xl font-bold">{metric.value}</h2>
-                        <div className="flex items-center mt-1">
-                          <p className="text-sm text-gray-500">{metric.title}</p>
-                          <div className={`ml-2 flex items-center px-1.5 py-0.5 rounded-full text-xs ${
-                            metric.changeType === 'increase' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                          }`}>
-                            <TrendingUp className="h-3 w-3 mr-0.5" />
+                              <div className={`flex items-center px-1.5 py-0.5 rounded-full text-xs ${
+                                metric.changeType === 'increase' ? 'bg-green-500/20 text-green-300' : 'bg-red-500/20 text-red-300'
+                              }`}>
+                                <TrendingUp className="h-2.5 w-2.5 mr-0.5" />
                             <span>{metric.change}</span>
                           </div>
                         </div>
-                        <p className="text-xs text-gray-500 mt-1">{metric.period}</p>
+                            <h3 className="text-lg font-bold mb-1">{metric.value}</h3>
+                            <p className="text-xs text-gray-300 mb-1">{metric.title}</p>
                       </div>
-                    </CardContent>
-                  </Card>
-                )
-              })}
+                        )
+                      })}
+                    </div>
+                    
+                    {/* Action buttons */}
+                    <div className="flex gap-3">
+                      <Button 
+                        className="bg-gray-600 hover:bg-gray-500 text-white border-0 flex items-center flex-1"
+                        size="sm"
+                      >
+                        <RefreshCw className="h-3 w-3 mr-1.5" />
+                        Refresh
+                      </Button>
+                      <Button 
+                        className="bg-white hover:bg-gray-100 text-gray-800 border border-gray-300 flex items-center flex-1"
+                        size="sm"
+                      >
+                        <Plus className="h-3 w-3 mr-1.5" />
+                        Start Learning
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Feature Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {/* Start Tutoring Card */}
+              <Card className="overflow-hidden border-0 shadow-sm bg-white hover:shadow-md transition-all duration-300 group">
+                <div className="relative h-32 bg-gradient-to-br from-blue-500 to-blue-600">
+                  <video 
+                    className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-300"
+                    autoPlay 
+                    muted 
+                    loop
+                    playsInline
+                  >
+                    <source src="/talkingPreview1.mp4" type="video/mp4" />
+                  </video>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+                </div>
+                <CardContent className="p-4">
+                  <div className="flex items-start justify-between mb-3">
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-800 mb-1">Start Tutoring</h3>
+                      <p className="text-sm text-gray-600">AI-powered learning sessions</p>
+                    </div>
+                    <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
+                      <Video className="h-5 w-5 text-white" />
+                    </div>
+                  </div>
+                  <div className="flex items-center text-sm text-gray-500">
+                    <span>Ready to learn</span>
+                  </div>
+                </CardContent>
+                <div className="h-1 bg-gradient-to-r from-white via-gray-300 to-black"></div>
+              </Card>
+
+              {/* Career Quiz Card */}
+              <Card className="overflow-hidden border-0 shadow-sm bg-white hover:shadow-md transition-all duration-300 group">
+                <div className="relative h-32 bg-gradient-to-br from-purple-500 to-purple-600">
+                  <video 
+                    className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-300"
+                    autoPlay 
+                    muted 
+                    loop
+                    playsInline
+                  >
+                    <source src="/talkingPreview2.mp4" type="video/mp4" />
+                  </video>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+                </div>
+                <CardContent className="p-4">
+                  <div className="flex items-start justify-between mb-3">
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-800 mb-1">Career Quiz</h3>
+                      <p className="text-sm text-gray-600">Discover your path</p>
+                    </div>
+                    <div className="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center">
+                      <GraduationCap className="h-5 w-5 text-white" />
+                    </div>
+                  </div>
+                  <div className="flex items-center text-sm text-gray-500">
+                    <span>Take assessment</span>
+                  </div>
+                </CardContent>
+                <div className="h-1 bg-gradient-to-r from-black via-gray-300 to-white"></div>
+              </Card>
+
+              {/* Practice Exam Card */}
+              <Card className="overflow-hidden border-0 shadow-sm bg-white hover:shadow-md transition-all duration-300 group">
+                <div className="relative h-32 bg-gradient-to-br from-green-500 to-green-600">
+                  <video 
+                    className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-300"
+                    autoPlay 
+                    muted 
+                    loop
+                    playsInline
+                  >
+                    <source src="/talkingPreview3.mp4" type="video/mp4" />
+                  </video>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+                </div>
+                <CardContent className="p-4">
+                  <div className="flex items-start justify-between mb-3">
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-800 mb-1">Practice Exam</h3>
+                      <p className="text-sm text-gray-600">Test your knowledge</p>
+                    </div>
+                    <div className="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center">
+                      <BookOpen className="h-5 w-5 text-white" />
+                    </div>
+                  </div>
+                  <div className="flex items-center text-sm text-gray-500">
+                    <span>Start practicing</span>
+                  </div>
+                </CardContent>
+                <div className="h-1 bg-gradient-to-r from-white via-gray-300 to-black"></div>
+              </Card>
+
+              {/* Study Groups Card */}
+              <Card className="overflow-hidden border-0 shadow-sm bg-white hover:shadow-md transition-all duration-300 group">
+                <div className="relative h-32 bg-gradient-to-br from-amber-500 to-amber-600">
+                  <video 
+                    className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-300"
+                    autoPlay 
+                    muted 
+                    loop
+                    playsInline
+                  >
+                    <source src="/talkingPreview4.mp4" type="video/mp4" />
+                  </video>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+                </div>
+                <CardContent className="p-4">
+                  <div className="flex items-start justify-between mb-3">
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-800 mb-1">Study Groups</h3>
+                      <p className="text-sm text-gray-600">Collaborate with peers</p>
+                    </div>
+                    <div className="w-10 h-10 bg-amber-500 rounded-lg flex items-center justify-center">
+                      <MessageSquare className="h-5 w-5 text-white" />
+                    </div>
+                  </div>
+                  <div className="flex items-center text-sm text-gray-500">
+                    <span>Join discussion</span>
+                  </div>
+                </CardContent>
+                <div className="h-1 bg-gradient-to-r from-black via-gray-300 to-white"></div>
+              </Card>
                     </div>
 
             {/* Weekly Progress */}
@@ -356,73 +491,7 @@ export default function Dashboard() {
             </Card>
           </div>
 
-            {/* Recent Activity */}
-            <Card className="overflow-hidden border-0 shadow-sm">
-              <CardHeader className="flex flex-row items-center justify-between p-6 pb-0">
-                <CardTitle className="text-lg font-semibold">Recent Activity</CardTitle>
-                <Button variant="outline" size="sm" className="text-xs">
-                  View All
-                </Button>
-              </CardHeader>
-              <CardContent className="p-6">
-                <div className="space-y-4">
-                  {recentActivities.map((activity) => {
-                    const ActivityIcon = activity.icon;
-                    return (
-                      <div key={activity.id} className="flex items-start p-3 hover:bg-gray-50 rounded-lg transition-colors">
-                        <div className={`${activity.iconBg} p-3 rounded-lg mr-4`}>
-                          <ActivityIcon className={`h-5 w-5 ${activity.iconColor}`} />
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between">
-                            <h4 className="font-medium text-sm">{activity.title}</h4>
-                            <span className="text-xs text-gray-500">{activity.time}</span>
-                      </div>
-                          <p className="text-xs text-gray-500 mt-1">
-                            {activity.subject} • {activity.duration}
-                          </p>
-                    </div>
-                        <span className="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded-full">
-                          {activity.status}
-                        </span>
-                      </div>
-                    )
-                  })}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Quick Actions */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              <Button 
-                className="h-auto py-4 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200"
-                variant="outline"
-              >
-                <Video className="h-5 w-5 mr-2" />
-                Start Tutoring
-              </Button>
-              <Button 
-                className="h-auto py-4 bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200"
-                variant="outline"
-              >
-                <GraduationCap className="h-5 w-5 mr-2" />
-                Career Quiz
-              </Button>
-              <Button 
-                className="h-auto py-4 bg-green-50 hover:bg-green-100 text-green-700 border border-green-200"
-                variant="outline"
-              >
-                <BookOpen className="h-5 w-5 mr-2" />
-                Practice Exam
-              </Button>
-              <Button 
-                className="h-auto py-4 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200"
-                variant="outline"
-              >
-                <MessageSquare className="h-5 w-5 mr-2" />
-                Study Groups
-              </Button>
-                </div>
+            
           </div>
         </div>
       </main>
