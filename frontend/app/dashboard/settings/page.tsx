@@ -31,6 +31,7 @@ import {
   Smartphone,
   Mail,
   Save,
+  Trophy,
 } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Separator } from "@/components/ui/separator"
@@ -91,73 +92,117 @@ export default function SettingsPage() {
 
         {/* Navigation */}
         <nav className="mt-6 px-2">
-          <div className="space-y-1">
-            <Link
-              href="/dashboard"
-              className="flex items-center px-4 py-3 text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <Home className="h-5 w-5" />
-              {!isSidebarCollapsed && <span className="ml-3 font-medium">Dashboard</span>}
-            </Link>
-            <Link
-              href="/dashboard/ai-tutoring"
-              className="flex items-center px-4 py-3 text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <Video className="h-5 w-5" />
-              {!isSidebarCollapsed && <span className="ml-3 font-medium">AI Tutoring</span>}
-            </Link>
-            <Link
-              href="/dashboard/career-guide"
-              className="flex items-center px-4 py-3 text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <GraduationCap className="h-5 w-5" />
-              {!isSidebarCollapsed && <span className="ml-3 font-medium">Career Guide</span>}
-            </Link>
-            <Link
-              href="/dashboard/exam-prep"
-              className="flex items-center px-4 py-3 text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <BookOpen className="h-5 w-5" />
-              {!isSidebarCollapsed && <span className="ml-3 font-medium">Exam Prep</span>}
-            </Link>
-            <Link
-              href="/dashboard/skill-hub"
-              className="flex items-center px-4 py-3 text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <Target className="h-5 w-5" />
-              {!isSidebarCollapsed && <span className="ml-3 font-medium">Skill Hub</span>}
-            </Link>
-            <Link
-              href="/dashboard/rewards"
-              className="flex items-center px-4 py-3 text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <Award className="h-5 w-5" />
-              {!isSidebarCollapsed && <span className="ml-3 font-medium">Rewards</span>}
-            </Link>
-            <Link
-              href="/dashboard/resources"
-              className="flex items-center px-4 py-3 text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <BookOpen className="h-5 w-5" />
-              {!isSidebarCollapsed && <span className="ml-3 font-medium">Resources</span>}
-            </Link>
+          {/* MAIN Section */}
+          <div className="mb-6">
+            {!isSidebarCollapsed && (
+              <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 mb-2">MAIN</h3>
+            )}
+            <div className="space-y-1">
+              <Link
+                href="/dashboard"
+                className="flex items-center px-4 py-3 text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <Home className="h-5 w-5" />
+                {!isSidebarCollapsed && <span className="ml-3 font-medium">Dashboard</span>}
+              </Link>
+              <Link
+                href="/dashboard/ai-tutoring"
+                className="flex items-center px-4 py-3 text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <Video className="h-5 w-5" />
+                {!isSidebarCollapsed && <span className="ml-3 font-medium">AI Tutoring</span>}
+              </Link>
+              <Link
+                href="/dashboard/career-guide"
+                className="flex items-center px-4 py-3 text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <GraduationCap className="h-5 w-5" />
+                {!isSidebarCollapsed && <span className="ml-3 font-medium">Career Guide</span>}
+              </Link>
+              <Link
+                href="/dashboard/exam-prep"
+                className="flex items-center px-4 py-3 text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <BookOpen className="h-5 w-5" />
+                {!isSidebarCollapsed && <span className="ml-3 font-medium">Exam Prep</span>}
+              </Link>
+            </div>
           </div>
 
+          {/* LEARNING Section */}
+          <div className="mb-6">
+            {!isSidebarCollapsed && (
+              <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 mb-2">LEARNING</h3>
+            )}
+            <div className="space-y-1">
+              <Link
+                href="/dashboard/skill-hub"
+                className="flex items-center px-4 py-3 text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <Target className="h-5 w-5" />
+                {!isSidebarCollapsed && <span className="ml-3 font-medium">Skill Hub</span>}
+              </Link>
+              <Link
+                href="/dashboard/contests"
+                className="flex items-center px-4 py-3 text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <Trophy className="h-5 w-5" />
+                {!isSidebarCollapsed && <span className="ml-3 font-medium">Contests</span>}
+              </Link>
+              <Link
+                href="/dashboard/resources"
+                className="flex items-center px-4 py-3 text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <BookOpen className="h-5 w-5" />
+                {!isSidebarCollapsed && <span className="ml-3 font-medium">Resources</span>}
+              </Link>
+            </div>
+          </div>
+
+          {/* ENGAGEMENT Section */}
+          <div className="mb-6">
+            {!isSidebarCollapsed && (
+              <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 mb-2">ENGAGEMENT</h3>
+            )}
+            <div className="space-y-1">
+              <Link
+                href="/dashboard/leaderboard"
+                className="flex items-center px-4 py-3 text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <Trophy className="h-5 w-5" />
+                {!isSidebarCollapsed && <span className="ml-3 font-medium">Leaderboard</span>}
+              </Link>
+              <Link
+                href="/dashboard/rewards"
+                className="flex items-center px-4 py-3 text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <Award className="h-5 w-5" />
+                {!isSidebarCollapsed && <span className="ml-3 font-medium">Rewards</span>}
+              </Link>
+            </div>
+          </div>
+
+          {/* SETTINGS Section */}
           <div className="mt-10 pt-6 border-t border-gray-200">
-            <Link
-              href="/dashboard/settings"
-              className="flex items-center px-4 py-3 text-white bg-black rounded-lg transition-colors"
-            >
-              <Settings className="h-5 w-5" />
-              {!isSidebarCollapsed && <span className="ml-3 font-medium">Settings</span>}
-            </Link>
-            <Link
-              href="/logout"
-              className="flex items-center px-4 py-3 text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <LogOut className="h-5 w-5" />
-              {!isSidebarCollapsed && <span className="ml-3 font-medium">Logout</span>}
-            </Link>
+            {!isSidebarCollapsed && (
+              <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 mb-2">SETTINGS</h3>
+            )}
+            <div className="space-y-1">
+              <Link
+                href="/dashboard/settings"
+                className="flex items-center px-4 py-3 text-white bg-black rounded-lg transition-colors"
+              >
+                <Settings className="h-5 w-5" />
+                {!isSidebarCollapsed && <span className="ml-3 font-medium">Settings</span>}
+              </Link>
+              <Link
+                href="/logout"
+                className="flex items-center px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+              >
+                <LogOut className="h-5 w-5" />
+                {!isSidebarCollapsed && <span className="ml-3 font-medium">Logout</span>}
+              </Link>
+            </div>
           </div>
         </nav>
       </div>

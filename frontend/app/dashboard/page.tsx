@@ -28,6 +28,10 @@ import {
   X,
   RefreshCw,
   Plus,
+  ArrowUp,
+  ArrowDown,
+  Zap,
+  Trophy,
 } from "lucide-react"
 
 export default function Dashboard() {
@@ -84,21 +88,16 @@ export default function Dashboard() {
   ]
 
   // Sample upcoming events
-  const upcomingEvents = [
-    { 
-      id: 1,
-      title: "Chemistry Group Study",
-      time: "Tomorrow, 4:00 PM",
-      duration: "60 min",
-      participants: 5
-    },
-    { 
-      id: 2,
-      title: "IELTS Speaking Practice",
-      time: "Friday, 2:30 PM",
-      duration: "45 min",
-      participants: 3
-    },
+  // const upcomingEvents = [
+  //   { id: 1, title: "Chemistry Group Study", time: "Tomorrow, 4:00 PM", duration: "60 min", participants: 5 },
+  //   { id: 2, title: "IELTS Speaking Practice", time: "Friday, 2:30 PM", duration: "45 min", participants: 3 },
+  // ]
+
+  // Sample leaderboard preview data
+  const leaderboardPreview = [
+    { id: 1, name: "Sarah J.", avatar: "/placeholder-user.jpg", xp: 2450, change: "up" },
+    { id: 2, name: "Michael T.", avatar: "/placeholder-user.jpg", xp: 2380, change: "up" },
+    { id: 3, name: user.name || "You", avatar: "/placeholder-user.jpg", xp: 1250, change: "down" },
   ]
 
   // Get current time for last updated
@@ -164,73 +163,117 @@ export default function Dashboard() {
 
         {/* Navigation */}
         <nav className="mt-6 px-2">
-          <div className="space-y-1">
-            <Link
-              href="/dashboard"
-              className="flex items-center px-4 py-3 text-white bg-black rounded-lg transition-colors"
-            >
-              <Home className="h-5 w-5" />
-              {!isSidebarCollapsed && <span className="ml-3 font-medium">Dashboard</span>}
-            </Link>
-            <Link
-              href="/dashboard/ai-tutoring"
-              className="flex items-center px-4 py-3 text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <Video className="h-5 w-5" />
-              {!isSidebarCollapsed && <span className="ml-3 font-medium">AI Tutoring</span>}
-            </Link>
-            <Link
-              href="/dashboard/career-guide"
-              className="flex items-center px-4 py-3 text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <GraduationCap className="h-5 w-5" />
-              {!isSidebarCollapsed && <span className="ml-3 font-medium">Career Guide</span>}
-            </Link>
-            <Link
-              href="/dashboard/exam-prep"
-              className="flex items-center px-4 py-3 text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <BookOpen className="h-5 w-5" />
-              {!isSidebarCollapsed && <span className="ml-3 font-medium">Exam Prep</span>}
-            </Link>
-            <Link
-              href="/dashboard/skill-hub"
-              className="flex items-center px-4 py-3 text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <Target className="h-5 w-5" />
-              {!isSidebarCollapsed && <span className="ml-3 font-medium">Skill Hub</span>}
-            </Link>
-            <Link
-              href="/dashboard/rewards"
-              className="flex items-center px-4 py-3 text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <Award className="h-5 w-5" />
-              {!isSidebarCollapsed && <span className="ml-3 font-medium">Rewards</span>}
-            </Link>
-            <Link
-              href="/dashboard/resources"
-              className="flex items-center px-4 py-3 text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <BookOpen className="h-5 w-5" />
-              {!isSidebarCollapsed && <span className="ml-3 font-medium">Resources</span>}
-            </Link>
+          {/* MAIN Section */}
+          <div className="mb-6">
+            {!isSidebarCollapsed && (
+              <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 mb-2">MAIN</h3>
+            )}
+            <div className="space-y-1">
+              <Link
+                href="/dashboard"
+                className="flex items-center px-4 py-3 text-white bg-black rounded-lg transition-colors"
+              >
+                <Home className="h-5 w-5" />
+                {!isSidebarCollapsed && <span className="ml-3 font-medium">Dashboard</span>}
+              </Link>
+              <Link
+                href="/dashboard/ai-tutoring"
+                className="flex items-center px-4 py-3 text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <Video className="h-5 w-5" />
+                {!isSidebarCollapsed && <span className="ml-3 font-medium">AI Tutoring</span>}
+              </Link>
+              <Link
+                href="/dashboard/career-guide"
+                className="flex items-center px-4 py-3 text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <GraduationCap className="h-5 w-5" />
+                {!isSidebarCollapsed && <span className="ml-3 font-medium">Career Guide</span>}
+              </Link>
+              <Link
+                href="/dashboard/exam-prep"
+                className="flex items-center px-4 py-3 text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <BookOpen className="h-5 w-5" />
+                {!isSidebarCollapsed && <span className="ml-3 font-medium">Exam Prep</span>}
+              </Link>
+            </div>
           </div>
 
+          {/* LEARNING Section */}
+          <div className="mb-6">
+            {!isSidebarCollapsed && (
+              <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 mb-2">LEARNING</h3>
+            )}
+            <div className="space-y-1">
+              <Link
+                href="/dashboard/skill-hub"
+                className="flex items-center px-4 py-3 text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <Target className="h-5 w-5" />
+                {!isSidebarCollapsed && <span className="ml-3 font-medium">Skill Hub</span>}
+              </Link>
+              <Link
+                href="/dashboard/contests"
+                className="flex items-center px-4 py-3 text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <Trophy className="h-5 w-5" />
+                {!isSidebarCollapsed && <span className="ml-3 font-medium">Contests</span>}
+              </Link>
+              <Link
+                href="/dashboard/resources"
+                className="flex items-center px-4 py-3 text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <BookOpen className="h-5 w-5" />
+                {!isSidebarCollapsed && <span className="ml-3 font-medium">Resources</span>}
+              </Link>
+            </div>
+          </div>
+
+          {/* ENGAGEMENT Section */}
+          <div className="mb-6">
+            {!isSidebarCollapsed && (
+              <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 mb-2">ENGAGEMENT</h3>
+            )}
+            <div className="space-y-1">
+              <Link
+                href="/dashboard/leaderboard"
+                className="flex items-center px-4 py-3 text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <Trophy className="h-5 w-5" />
+                {!isSidebarCollapsed && <span className="ml-3 font-medium">Leaderboard</span>}
+              </Link>
+              <Link
+                href="/dashboard/rewards"
+                className="flex items-center px-4 py-3 text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <Award className="h-5 w-5" />
+                {!isSidebarCollapsed && <span className="ml-3 font-medium">Rewards</span>}
+              </Link>
+            </div>
+          </div>
+
+          {/* SETTINGS Section */}
           <div className="mt-10 pt-6 border-t border-gray-200">
-            <Link
-              href="/dashboard/settings"
-              className="flex items-center px-4 py-3 text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <Settings className="h-5 w-5" />
-              {!isSidebarCollapsed && <span className="ml-3 font-medium">Settings</span>}
-            </Link>
-            <Link
-              href="/logout"
-              className="flex items-center px-4 py-3 text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <LogOut className="h-5 w-5" />
-              {!isSidebarCollapsed && <span className="ml-3 font-medium">Logout</span>}
-            </Link>
+            {!isSidebarCollapsed && (
+              <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 mb-2">SETTINGS</h3>
+            )}
+            <div className="space-y-1">
+              <Link
+                href="/dashboard/settings"
+                className="flex items-center px-4 py-3 text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <Settings className="h-5 w-5" />
+                {!isSidebarCollapsed && <span className="ml-3 font-medium">Settings</span>}
+              </Link>
+              <Link
+                href="/logout"
+                className="flex items-center px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+              >
+                <LogOut className="h-5 w-5" />
+                {!isSidebarCollapsed && <span className="ml-3 font-medium">Logout</span>}
+              </Link>
+            </div>
           </div>
         </nav>
       </div>
@@ -459,36 +502,46 @@ export default function Dashboard() {
             
               <Card className="overflow-hidden border-0 shadow-sm">
                 <CardHeader className="flex flex-row items-center justify-between p-6 pb-0">
-                  <CardTitle className="text-lg font-semibold">Upcoming</CardTitle>
+                  <CardTitle className="text-lg font-semibold">Leaderboard</CardTitle>
                   <Button variant="ghost" size="icon">
                     <MoreVertical className="h-4 w-4" />
                   </Button>
-              </CardHeader>
+                </CardHeader>
                 <CardContent className="p-6">
-                  <div className="space-y-4">
-                    {upcomingEvents.map((event) => (
-                      <div key={event.id} className="flex items-center p-3 bg-gray-50 rounded-lg">
-                        <div className="bg-blue-100 p-3 rounded-lg mr-4">
-                          <Calendar className="h-5 w-5 text-blue-600" />
-                      </div>
-                      <div className="flex-1">
-                          <h4 className="font-medium text-sm">{event.title}</h4>
-                          <div className="flex items-center text-xs text-gray-500 mt-1">
-                            <Clock className="h-3 w-3 mr-1" />
-                            <span>{event.time} • {event.duration}</span>
-                </div>
+                  <div className="space-y-3">
+                    {leaderboardPreview.map((user, index) => (
+                      <div
+                        key={user.id}
+                        className={`flex items-center p-3 rounded-lg ${user.name === (user.name || "You") ? "bg-blue-50 border border-blue-100" : "hover:bg-gray-50"}`}
+                      >
+                        <div className="w-8 text-center font-bold text-gray-500">{index + 1}</div>
+                        <div className="h-10 w-10 rounded-full overflow-hidden mx-3">
+                          <Image src={user.avatar} alt={user.name} width={40} height={40} />
                         </div>
-                        <Button variant="outline" size="sm" className="ml-2">
-                          Join
-                        </Button>
+                        <div className="flex-1">
+                          <h4 className={`font-medium ${user.name === (user.name || "You") ? "text-blue-600" : ""}`}>{user.name}</h4>
+                        </div>
+                        <div className="flex items-center">
+                          <div className="mr-3 flex items-center">
+                            <Zap className="h-4 w-4 text-amber-500 mr-1" />
+                            <span className="font-bold">{user.xp}</span>
+                          </div>
+                          {user.change === "up" ? (
+                            <ArrowUp className="h-4 w-4 text-green-500" />
+                          ) : (
+                            <ArrowDown className="h-4 w-4 text-red-500" />
+                          )}
+                        </div>
                       </div>
                     ))}
-                    <Button variant="ghost" className="w-full text-sm">
-                      View Calendar
-                      </Button>
-                </div>
-              </CardContent>
-            </Card>
+                  </div>
+                  <Link href="/dashboard/leaderboard">
+                    <Button variant="ghost" className="w-full text-sm mt-4">
+                      View Full Leaderboard
+                    </Button>
+                  </Link>
+                </CardContent>
+              </Card>
           </div>
 
             
