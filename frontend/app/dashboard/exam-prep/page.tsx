@@ -289,60 +289,57 @@ export default function ExamPrep() {
 
         {/* Main Content */}
         <main className="px-4 py-6 md:px-6">
-          {/* Exam Type Tabs */}
+          {/* Exam Type Tabs and Stats Cards */}
           <div className="mb-6">
-            <div className="flex overflow-x-auto pb-2 space-x-2">
-              {examTypes.map((examType) => (
-                <Button
-                  key={examType.id}
-                  variant={activeTab === examType.id ? "default" : "outline"}
-                  className={`flex items-center ${activeTab === examType.id ? "bg-black text-white" : ""}`}
-                  onClick={() => setActiveTab(examType.id)}
-                >
-                  <span className="mr-2">{examType.icon}</span>
-                  {examType.name}
-                </Button>
-              ))}
-            </div>
-          </div>
-
-          {/* Search and Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-            <div className="md:col-span-2">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-                <Input
-                  placeholder="Search practice tests..."
-                  className="pl-10"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              {/* Exam Type Tabs */}
+              <div className="flex overflow-x-auto pb-2 space-x-2">
+                {examTypes.map((examType) => (
+                  <Button
+                    key={examType.id}
+                    variant={activeTab === examType.id ? "default" : "outline"}
+                    className={`flex items-center h-9 ${activeTab === examType.id ? "bg-black text-white" : ""}`}
+                    onClick={() => setActiveTab(examType.id)}
+                  >
+                    <span className="mr-2">{examType.icon}</span>
+                    {examType.name}
+                  </Button>
+                ))}
+              </div>
+              
+              {/* Stats Cards */}
+              <div className="flex space-x-4">
+                <Card className="bg-gradient-to-r from-blue-50 to-blue-100 border-blue-200 hover:from-blue-100 hover:to-blue-200 transition-all duration-300 hover:shadow-lg hover:scale-105 cursor-pointer group h-16 w-48">
+                  <CardContent className="p-4 flex items-center h-full">
+                    <div className="h-10 w-10 bg-blue-200 rounded-full flex items-center justify-center mr-3 group-hover:bg-blue-300 transition-colors duration-300">
+                      <Clock className="h-5 w-5 text-blue-700 group-hover:text-blue-800 transition-colors duration-300" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-blue-800 group-hover:text-blue-900 transition-colors duration-300">Next Exam</p>
+                      <p className="text-xl font-bold text-blue-900 group-hover:text-blue-950 transition-colors duration-300">14 Days</p>
+                    </div>
+                    <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <ChevronRight className="h-4 w-4 text-blue-600" />
+                    </div>
+                  </CardContent>
+                </Card>
+                
+                <Card className="bg-gradient-to-r from-green-50 to-green-100 border-green-200 hover:from-green-100 hover:to-green-200 transition-all duration-300 hover:shadow-lg hover:scale-105 cursor-pointer group h-16 w-48">
+                  <CardContent className="p-4 flex items-center h-full">
+                    <div className="h-10 w-10 bg-green-200 rounded-full flex items-center justify-center mr-3 group-hover:bg-green-300 transition-colors duration-300">
+                      <BarChart3 className="h-5 w-5 text-green-700 group-hover:text-green-800 transition-colors duration-300" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-green-800 group-hover:text-green-900 transition-colors duration-300">Avg. Score</p>
+                      <p className="text-xl font-bold text-green-900 group-hover:text-green-950 transition-colors duration-300">78.5%</p>
+                    </div>
+                    <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <ChevronRight className="h-4 w-4 text-green-600" />
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
             </div>
-            
-            <Card className="bg-blue-50 border-blue-100">
-              <CardContent className="p-4 flex items-center">
-                <div className="h-10 w-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
-                  <Clock className="h-5 w-5 text-blue-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-blue-800">Next Exam</p>
-                  <p className="text-xl font-bold text-blue-900">14 Days</p>
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card className="bg-green-50 border-green-100">
-              <CardContent className="p-4 flex items-center">
-                <div className="h-10 w-10 bg-green-100 rounded-full flex items-center justify-center mr-3">
-                  <BarChart3 className="h-5 w-5 text-green-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-green-800">Avg. Score</p>
-                  <p className="text-xl font-bold text-green-900">78.5%</p>
-                </div>
-              </CardContent>
-            </Card>
           </div>
 
           {/* Practice Tests and Study Materials */}
@@ -394,7 +391,7 @@ export default function ExamPrep() {
                             </div>
                           </div>
                           
-                          {exam.completed && (
+                          {exam.completed && exam.score !== null && (
                             <div className="mt-3 pt-3 border-t border-gray-200">
                               <div className="flex justify-between text-sm mb-1">
                                 <span>Performance</span>
