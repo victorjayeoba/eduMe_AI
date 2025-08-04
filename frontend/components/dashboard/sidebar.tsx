@@ -20,7 +20,7 @@ export function Sidebar({ expanded, onToggle }: SidebarProps) {
     { icon: <GraduationCap size={20} />, label: "AI Tutoring", path: "/dashboard/ai-tutoring" },
     { icon: <Briefcase size={20} />, label: "Career Guide", path: "/dashboard/career-guide" },
     { icon: <BookOpen size={20} />, label: "Exam Prep", path: "/dashboard/exam-prep" },
-    { icon: <FileText size={20} />, label: "Resources", path: "/dashboard/resources" },
+    // { icon: <FileText size={20} />, label: "Resources", path: "/dashboard/resources" },
     { icon: <Gift size={20} />, label: "Rewards", path: "/dashboard/rewards" },
   ];
 

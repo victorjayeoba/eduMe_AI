@@ -337,13 +337,13 @@ export default function CareerGuide() {
                 <Trophy className="h-5 w-5" />
                 {!isSidebarCollapsed && <span className="ml-3 font-medium">Contests</span>}
               </Link>
-              <Link
+              {/* <Link
                 href="/dashboard/resources"
                 className="flex items-center px-4 py-2.5 text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
               >
                 <BookOpen className="h-5 w-5" />
                 {!isSidebarCollapsed && <span className="ml-3 font-medium">Resources</span>}
-              </Link>
+              </Link> */}
             </div>
           </div>
 
