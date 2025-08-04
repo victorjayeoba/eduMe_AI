@@ -43,7 +43,7 @@ function VerifyEmailContent() {
       <div className="max-w-md w-full bg-white rounded-xl shadow-lg p-8 text-center">
         {/* Logo */}
         <Link href="/" className="flex items-center justify-center group mb-8">
-          <img src="/edumeai-logo.png" alt="EduMeAI Logo" className="h-12 mr-1" />
+          {/* <img src="/edumeai-logo.png" alt="EduMeAI Logo" className="h-12 mr-1" /> */}
           <div className="flex items-center space-x-0.5">
             <span className="text-xl font-bold text-black">EduMe</span>
             <span className="text-xl font-bold text-black bg-black/10 px-1 py-0.5 rounded-md border border-black/20 ml-1">

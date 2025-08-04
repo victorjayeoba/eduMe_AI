@@ -137,7 +137,7 @@ export default function SignupPage() {
           <div className="flex justify-between items-center h-16 px-6">
             {/* Logo */}
             <Link href="/" className="flex items-center group">
-              <img src="/edumeai-logo.png" alt="EduMeAI Logo" className="h-12 mr-1 transition-transform duration-200 ease-in-out group-hover:scale-105" />
+              {/* <img src="/edumeai-logo.png" alt="EduMeAI Logo" className="h-12 mr-1 transition-transform duration-200 ease-in-out group-hover:scale-105" /> */}
               <div className="flex items-center space-x-0.5">
                 <span className="text-xl font-bold text-black">EduMe</span>
                 <span className="text-xl font-bold text-black bg-black/10 px-1 py-0.5 rounded-md border border-black/20 ml-1">
