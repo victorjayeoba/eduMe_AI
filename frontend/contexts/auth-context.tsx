@@ -69,6 +69,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       };
       
       await sendEmailVerification(user, actionCodeSettings);
+      
+      // Redirect to onboarding after successful signup
+      window.location.href = "/onboarding";
       return;
     } catch (err) {
       console.error("Error signing up:", err);

@@ -50,7 +50,8 @@ export default function AITutoring() {
         data-monitor="true"
         data-target-id="d-id"
       />
-
+{/*         data-client-key="Z29vZ2xlLW9hdXRoMnwxMTQ2Njc2NDY4NzkzODc3ODQ2MzY6ejh1d0FKTEdQTlh3Q0FIWVVFTFdF"
+        data-agent-id="v2_agt_UaMp8MMT" */}
       {/* Mobile Sidebar Toggle */}
       <div className="fixed top-4 left-4 z-50 md:hidden">
         <Button

@@ -1,8 +1,11 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
+import { useAuth } from "@/contexts/auth-context"
+import { doc, getDoc } from "firebase/firestore"
+import { db } from "@/lib/firebase"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -35,15 +38,46 @@ import {
 } from "lucide-react"
 
 export default function Dashboard() {
+  const { user: authUser } = useAuth()
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
+  const [userProfile, setUserProfile] = useState<{
+    name: string
+    email: string
+    educationLevel: string
+  } | null>(null)
+  const [loading, setLoading] = useState(true)
 
-  // Sample user data - in a real app this would come from authentication context
-  const user = {
-    title: "Adedeji",
-    name: "Adedeji",
-    email: "adedeji@example.com"
-  }
+  // Fetch user profile from Firestore
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      if (authUser) {
+        try {
+          const userDoc = await getDoc(doc(db, "users", authUser.uid))
+          if (userDoc.exists()) {
+            const data = userDoc.data()
+            setUserProfile({
+              name: data.name || authUser.displayName || "User",
+              email: data.email || authUser.email || "",
+              educationLevel: data.educationLevel || ""
+            })
+          } else {
+            // If no profile exists, redirect to onboarding
+            window.location.href = "/onboarding"
+            return
+          }
+        } catch (error) {
+          console.error("Error fetching user profile:", error)
+        } finally {
+          setLoading(false)
+        }
+      } else {
+        setLoading(false)
+      }
+    }
+
+    fetchUserProfile()
+  }, [authUser])
 
   // Sample metrics data
   const metrics = [
@@ -97,7 +131,7 @@ export default function Dashboard() {
   const leaderboardPreview = [
     { id: 1, name: "Sarah J.", avatar: "/placeholder-user.jpg", xp: 2450, change: "up" },
     { id: 2, name: "Michael T.", avatar: "/placeholder-user.jpg", xp: 2380, change: "up" },
-    { id: 3, name: user.name || "You", avatar: "/placeholder-user.jpg", xp: 1250, change: "down" },
+    { id: 3, name: userProfile?.name || "You", avatar: "/placeholder-user.jpg", xp: 1250, change: "down" },
   ]
 
   // Get current time for last updated
@@ -109,6 +143,18 @@ export default function Dashboard() {
       second: '2-digit',
       hour12: true 
     })
+  }
+
+  // Show loading state while fetching user profile
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading your dashboard...</p>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -289,7 +335,7 @@ export default function Dashboard() {
                   {/* Left side - Welcome message */}
                   <div className="lg:w-1/3 flex flex-col justify-center">
                     <div className="mb-4">
-                      <h1 className="text-2xl font-bold mb-2">Welcome back, {user?.title || 'Student'}! 👋</h1>
+                      <h1 className="text-2xl font-bold mb-2">Welcome back, {userProfile?.name || 'Student'}! 👋</h1>
                       <p className="text-gray-300 mb-3">Ready to ace your studies today?</p>
                       <p className="text-sm text-gray-400 mb-2">Keep pushing towards your academic goals!</p>
                       <p className="text-xs text-gray-500">Last updated: {getCurrentTime()}</p>
@@ -509,24 +555,24 @@ export default function Dashboard() {
                 </CardHeader>
                 <CardContent className="p-6">
                   <div className="space-y-3">
-                    {leaderboardPreview.map((user, index) => (
+                    {leaderboardPreview.map((leaderboardUser, index) => (
                       <div
-                        key={user.id}
-                        className={`flex items-center p-3 rounded-lg ${user.name === (user.name || "You") ? "bg-blue-50 border border-blue-100" : "hover:bg-gray-50"}`}
+                        key={leaderboardUser.id}
+                        className={`flex items-center p-3 rounded-lg ${leaderboardUser.name === (userProfile?.name || "You") ? "bg-blue-50 border border-blue-100" : "hover:bg-gray-50"}`}
                       >
                         <div className="w-8 text-center font-bold text-gray-500">{index + 1}</div>
                         <div className="h-10 w-10 rounded-full overflow-hidden mx-3">
-                          <Image src={user.avatar} alt={user.name} width={40} height={40} />
+                          <Image src={leaderboardUser.avatar} alt={leaderboardUser.name} width={40} height={40} />
                         </div>
                         <div className="flex-1">
-                          <h4 className={`font-medium ${user.name === (user.name || "You") ? "text-blue-600" : ""}`}>{user.name}</h4>
+                          <h4 className={`font-medium ${leaderboardUser.name === (userProfile?.name || "You") ? "text-blue-600" : ""}`}>{leaderboardUser.name}</h4>
                         </div>
                         <div className="flex items-center">
                           <div className="mr-3 flex items-center">
                             <Zap className="h-4 w-4 text-amber-500 mr-1" />
-                            <span className="font-bold">{user.xp}</span>
+                            <span className="font-bold">{leaderboardUser.xp}</span>
                           </div>
-                          {user.change === "up" ? (
+                          {leaderboardUser.change === "up" ? (
                             <ArrowUp className="h-4 w-4 text-green-500" />
                           ) : (
                             <ArrowDown className="h-4 w-4 text-red-500" />

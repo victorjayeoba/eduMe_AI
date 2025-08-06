@@ -10,6 +10,8 @@ import { EyeIcon, EyeOffIcon, Menu, X, AlertCircle } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
 import { toast } from "sonner"
 import { getAuth, sendEmailVerification } from "firebase/auth"
+import { doc, getDoc } from "firebase/firestore"
+import { db } from "@/lib/firebase"
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
@@ -64,8 +66,27 @@ export default function LoginPage() {
       if (auth.currentUser && !auth.currentUser.emailVerified) {
         setShowVerificationWarning(true)
       } else {
-        toast.success("Login successful!")
-        router.push("/dashboard")
+        // Check if user has completed onboarding
+        if (auth.currentUser) {
+          try {
+            const userDoc = await getDoc(doc(db, "users", auth.currentUser.uid))
+            if (userDoc.exists() && userDoc.data().name) {
+              toast.success("Login successful!")
+              router.push("/dashboard")
+            } else {
+              // User needs to complete onboarding
+              toast.success("Login successful! Please complete your profile.")
+              router.push("/onboarding")
+            }
+          } catch (error) {
+            console.error("Error checking user profile:", error)
+            toast.success("Login successful!")
+            router.push("/dashboard")
+          }
+        } else {
+          toast.success("Login successful!")
+          router.push("/dashboard")
+        }
       }
     } catch (error: any) {
       console.error("Login error:", error)
@@ -80,8 +101,28 @@ export default function LoginPage() {
     
     try {
       await signInWithGoogle()
-      toast.success("Login successful!")
-      router.push("/dashboard")
+      
+      // Check if user has completed onboarding
+      if (auth.currentUser) {
+        try {
+          const userDoc = await getDoc(doc(db, "users", auth.currentUser.uid))
+          if (userDoc.exists() && userDoc.data().name) {
+            toast.success("Login successful!")
+            router.push("/dashboard")
+          } else {
+            // User needs to complete onboarding
+            toast.success("Login successful! Please complete your profile.")
+            router.push("/onboarding")
+          }
+        } catch (error) {
+          console.error("Error checking user profile:", error)
+          toast.success("Login successful!")
+          router.push("/dashboard")
+        }
+      } else {
+        toast.success("Login successful!")
+        router.push("/dashboard")
+      }
     } catch (error: any) {
       console.error("Google sign-in error:", error)
       toast.error(error.message || "Failed to sign in with Google. Please try again.")
