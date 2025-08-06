@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import Link from "next/link"
 
 export default function ExamPrep() {
   return (
@@ -38,7 +39,9 @@ export default function ExamPrep() {
                   Practice tests & performance tracking
                 </li>
               </ul>
-              <Button className="w-full bg-black text-white hover:bg-black/80">Start Preparing</Button>
+              <Button asChild className="w-full bg-black text-white hover:bg-black/80">
+                <Link href="/signup">Start Preparing</Link>
+              </Button>
             </CardContent>
           </Card>
           
@@ -68,7 +71,9 @@ export default function ExamPrep() {
                   Structured practice materials
                 </li>
               </ul>
-              <Button className="w-full bg-black text-white hover:bg-black/80">Start Preparing</Button>
+              <Button asChild className="w-full bg-black text-white hover:bg-black/80">
+                <Link href="/signup">Start Preparing</Link>
+              </Button>
             </CardContent>
           </Card>
           
@@ -98,7 +103,9 @@ export default function ExamPrep() {
                   Targeted practice exercises
                 </li>
               </ul>
-              <Button className="w-full bg-black text-white hover:bg-black/80">Explore Options</Button>
+              <Button asChild className="w-full bg-black text-white hover:bg-black/80">
+                <Link href="/signup">Explore Options</Link>
+              </Button>
             </CardContent>
           </Card>
         </div>

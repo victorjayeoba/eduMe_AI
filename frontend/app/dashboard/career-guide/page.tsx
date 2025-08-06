@@ -1,4 +1,4 @@
- "use client"
+"use client"
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
@@ -28,6 +28,9 @@ import {
   Trophy,
   Crown,
   Medal,
+  User,
+  MessageSquare,
+  Send,
 } from "lucide-react"
 import { QuizProvider, useQuiz } from '@/contexts/quiz-context'
 import { QuestionCard } from '@/components/career-quiz/QuestionCard'
@@ -105,130 +108,100 @@ function QuizContent() {
   );
 }
 
-function QuizIntro({ onStart }: { onStart: () => void }) {
-  return (
-    <div className="max-w-4xl mx-auto">
-      <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-4">
-          🎯 Discover Your Ideal Career Path
-        </h2>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          Take our comprehensive career assessment designed specifically for Nigerian students. 
-          Get personalized course recommendations, admission likelihood, and salary expectations.
-        </p>
-      </div>
+function CareerGuideContent() {
+  const [showIntro, setShowIntro] = useState(true);
+  const { state } = useQuiz();
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <Card className="text-center border-0 shadow-sm hover:shadow-md transition-shadow">
-          <CardHeader className="pb-3">
-            <Brain className="w-8 h-8 mx-auto text-blue-600 mb-2" />
-            <CardTitle className="text-lg">Smart Assessment</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-gray-600">
-              AI-powered branching quiz that adapts to your responses
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="text-center border-0 shadow-sm hover:shadow-md transition-shadow">
-          <CardHeader className="pb-3">
-            <Target className="w-8 h-8 mx-auto text-green-600 mb-2" />
-            <CardTitle className="text-lg">Personalized Results</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-gray-600">
-              Tailored course and career recommendations based on your interests
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="text-center border-0 shadow-sm hover:shadow-md transition-shadow">
-          <CardHeader className="pb-3">
-            <School className="w-8 h-8 mx-auto text-purple-600 mb-2" />
-            <CardTitle className="text-lg">Nigerian Context</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-gray-600">
-              Aligned with JAMB, Nigerian universities, and local job market
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="text-center border-0 shadow-sm hover:shadow-md transition-shadow">
-          <CardHeader className="pb-3">
-            <TrendingUp className="w-8 h-8 mx-auto text-orange-600 mb-2" />
-            <CardTitle className="text-lg">Admission Insights</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-gray-600">
-              Realistic admission chances and salary expectations
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-
-      <Card className="bg-gradient-to-r from-blue-50 to-purple-50 border-0 shadow-sm mb-8">
-        <CardContent className="p-6">
-          <h3 className="text-lg font-semibold mb-4">What You'll Get:</h3>
-          <div className="grid md:grid-cols-2 gap-4 text-sm">
-            <div className="space-y-3">
-              <div className="flex items-center space-x-2">
-                <Check className="h-5 w-5 text-blue-600" />
-                <span>Personalized course recommendations</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Check className="h-5 w-5 text-green-600" />
-                <span>Institution fit analysis (Federal/State/Private/Abroad)</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Check className="h-5 w-5 text-purple-600" />
-                <span>Admission likelihood assessment</span>
-              </div>
+  if (showIntro) {
+    return (
+      <div className="flex h-full bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800">
+        {/* Caller Avatar Section */}
+        <div className="w-2/5 flex flex-col items-center justify-center p-12 relative">
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-purple-600/10 backdrop-blur-sm"></div>
+          <div className="relative text-center">
+            <div className="w-40 h-40 bg-gradient-to-br from-gray-600 to-gray-800 rounded-full flex items-center justify-center mb-8 shadow-2xl ring-4 ring-white/10">
+              <User className="w-20 h-20 text-gray-300" />
             </div>
-            <div className="space-y-3">
-              <div className="flex items-center space-x-2">
-                <Check className="h-5 w-5 text-orange-600" />
-                <span>Expected salary ranges</span>
+            <h3 className="text-2xl font-bold text-white mb-3 tracking-tight">Career Advisor</h3>
+            <p className="text-gray-300 text-base leading-relaxed max-w-xs">Ready to help you discover your ideal career path</p>
+            <div className="mt-6 flex items-center justify-center space-x-2">
+              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+              <span className="text-green-400 text-sm font-medium">Online</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Chat Interface */}
+        <div className="w-3/5 bg-white/95 backdrop-blur-sm flex flex-col rounded-l-3xl shadow-2xl">
+          {/* Chat Header */}
+          <div className="border-b border-gray-200/50 p-8 bg-white/50 backdrop-blur-sm rounded-tl-3xl">
+            <h2 className="text-3xl font-bold text-gray-900 mb-2 tracking-tight">Career Assessment</h2>
+            <p className="text-gray-600 text-lg">Let's find your perfect career match</p>
+          </div>
+
+          {/* Chat Messages */}
+          <div className="flex-1 p-8 overflow-y-auto bg-gradient-to-b from-gray-50/30 to-white/50">
+            <div className="space-y-6 max-w-2xl">
+              <div className="flex items-start space-x-4">
+                <div className="w-10 h-10 bg-gradient-to-br from-gray-600 to-gray-800 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg">
+                  <User className="w-5 h-5 text-white" />
+                </div>
+                <div className="bg-white/80 backdrop-blur-sm rounded-2xl rounded-tl-md p-5 max-w-lg shadow-lg border border-gray-200/50">
+                  <p className="text-gray-800 leading-relaxed">Hi! I'm here to help you discover your ideal career path. This assessment will take about <span className="font-semibold text-blue-600">5-7 minutes</span> and includes <span className="font-semibold text-blue-600">12-15 questions</span>.</p>
+                </div>
               </div>
-              <div className="flex items-center space-x-2">
-                <Check className="h-5 w-5 text-red-600" />
-                <span>Career pathway guidance</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Check className="h-5 w-5 text-indigo-600" />
-                <span>Skills development recommendations</span>
+              
+              <div className="flex items-start space-x-4">
+                <div className="w-10 h-10 bg-gradient-to-br from-gray-600 to-gray-800 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg">
+                  <User className="w-5 h-5 text-white" />
+                </div>
+                <div className="bg-white/80 backdrop-blur-sm rounded-2xl rounded-tl-md p-5 max-w-lg shadow-lg border border-gray-200/50">
+                  <p className="text-gray-800 leading-relaxed">I'll ask you questions about your <span className="font-semibold text-purple-600">interests</span>, <span className="font-semibold text-green-600">skills</span>, and <span className="font-semibold text-orange-600">preferences</span> to provide personalized recommendations.</p>
+                </div>
               </div>
             </div>
           </div>
-        </CardContent>
-      </Card>
 
-      <div className="text-center">
-        <Button 
-          onClick={onStart}
-          size="lg"
-          className="px-8 py-6 text-lg bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-md hover:shadow-lg transition-all"
-        >
-          Start Your Career Assessment
-          <ArrowRight className="ml-2 h-5 w-5" />
-        </Button>
-        <p className="text-sm text-gray-500 mt-4">
-          ⏱️ Takes about 5-7 minutes • 📊 ~12-15 questions via smart branching
-        </p>
+          {/* Start Button */}
+          <div className="p-8 bg-white/50 backdrop-blur-sm border-t border-gray-200/50">
+            <Button 
+              onClick={() => setShowIntro(false)}
+              size="lg"
+              className="w-full bg-gradient-to-r from-gray-900 to-black hover:from-black hover:to-gray-900 text-white py-4 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-[1.02] font-semibold text-lg"
+            >
+              Start Assessment
+              <ArrowRight className="ml-3 h-6 w-6" />
+            </Button>
+            <p className="text-center text-gray-500 text-sm mt-4">
+              ✨ Powered by AI • 🔒 Your data is secure
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex h-full">
+      {/* Caller Avatar Section */}
+      <div className="w-1/3 bg-gray-900 flex flex-col items-center justify-center p-8">
+        <div className="text-center">
+          <div className="w-32 h-32 bg-gray-700 rounded-full flex items-center justify-center mb-6">
+            <User className="w-16 h-16 text-gray-400" />
+          </div>
+          <h3 className="text-xl font-semibold text-white mb-2">Career Advisor</h3>
+          <p className="text-gray-400 text-sm">Question {state?.answers?.length + 1 || 1} of 15</p>
+        </div>
+      </div>
+
+      {/* Questionnaire Interface */}
+      <div className="w-2/3 bg-white flex flex-col">
+        <div className="flex-1 p-6 overflow-y-auto">
+          <QuizContent />
+        </div>
       </div>
     </div>
   );
-}
-
-function CareerGuideContent() {
-  const [showIntro, setShowIntro] = useState(true);
-
-  if (showIntro) {
-    return <QuizIntro onStart={() => setShowIntro(false)} />;
-  }
-
-  return <QuizContent />;
 }
 
 export default function CareerGuide() {
@@ -397,10 +370,30 @@ export default function CareerGuide() {
 
       {/* Main Content */}
       <div className={`flex-1 transition-all duration-300 ${isSidebarCollapsed ? "md:ml-20" : "md:ml-64"}`}>
-        {/* Header is now in the layout */}
+        {/* Header with Feature Cards */}
+        <div className="bg-white border-b border-gray-200 px-6 py-4">
+          <div className="flex space-x-4">
+            <div className="flex items-center px-3 py-2 rounded-lg border border-gray-200 bg-blue-50 hover:bg-blue-100 transition-all duration-300 hover:shadow-md cursor-pointer">
+              <Brain className="w-4 h-4 text-blue-600 mr-2" />
+              <span className="text-sm font-medium">Smart</span>
+            </div>
+            <div className="flex items-center px-3 py-2 rounded-lg border border-gray-200 bg-green-50 hover:bg-green-100 transition-all duration-300 hover:shadow-md cursor-pointer">
+              <Target className="w-4 h-4 text-green-600 mr-2" />
+              <span className="text-sm font-medium">Personalized</span>
+            </div>
+            <div className="flex items-center px-3 py-2 rounded-lg border border-gray-200 bg-purple-50 hover:bg-purple-100 transition-all duration-300 hover:shadow-md cursor-pointer">
+              <School className="w-4 h-4 text-purple-600 mr-2" />
+              <span className="text-sm font-medium">Local</span>
+            </div>
+            <div className="flex items-center px-3 py-2 rounded-lg border border-gray-200 bg-orange-50 hover:bg-orange-100 transition-all duration-300 hover:shadow-md cursor-pointer">
+              <TrendingUp className="w-4 h-4 text-orange-600 mr-2" />
+              <span className="text-sm font-medium">Insights</span>
+            </div>
+          </div>
+        </div>
 
         {/* Main Content */}
-        <main className="px-4 py-6 md:px-6">
+        <main className="h-[calc(100vh-8rem)]">
           <QuizProvider>
             <CareerGuideContent />
           </QuizProvider>

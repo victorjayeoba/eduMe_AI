@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import Link from "next/link";
 
 const steps = [
   {
@@ -119,9 +120,9 @@ export default function ProcessFlow() {
         
         {/* Call to Action */}
         <div className="mt-16 text-center">
-          <button className="px-8 py-3 bg-black text-white rounded-md hover:bg-gray-800 transition-colors">
+          <Link href="/signup" className="inline-block px-8 py-3 bg-black text-white rounded-md hover:bg-gray-800 transition-colors">
             Start Learning Now
-          </button>
+          </Link>
         </div>
       </div>
     </section>

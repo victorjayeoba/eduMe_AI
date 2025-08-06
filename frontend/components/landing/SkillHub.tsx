@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button"
+import Link from "next/link"
 
 export default function SkillHub() {
   return (
@@ -106,8 +107,8 @@ export default function SkillHub() {
         </div>
         
         <div className="mt-12 text-center">
-          <Button className="bg-black text-white hover:bg-black/80 px-8 py-3 rounded-full">
-            Explore All Skills
+          <Button asChild className="bg-black text-white hover:bg-black/80 px-8 py-3 rounded-full">
+            <Link href="/signup">Explore All Skills</Link>
           </Button>
         </div>
       </div>
