@@ -121,7 +121,7 @@ export default function ProcessFlow() {
         <div className="mt-16 text-center">
           ProcessFlow  
           <Link
-              href="/signup"
+              href="/signup">2
           <button className="px-8 py-3 bg-black text-white rounded-md hover:bg-gray-800 transition-colors">
             Start Learning Now
           </button>
