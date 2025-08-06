@@ -4,6 +4,7 @@ import Head from 'next/head'
 import { motion, useMotionValue, useTransform, useAnimation } from "framer-motion"
 import TrueFocus from "../react-bits/TrueFocus"
 import TextType from "../react-bits/TextType"
+import Link from "next/link"
 import Aurora from "../react-bits/Aurora"
 import AnimatedGradient from "../ui/animated-gradient"
 
@@ -155,21 +156,23 @@ export default function Hero() {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button
+              <Link
+                href="/signup"
                 size="lg"
                 className="bg-gray-800 hover:bg-indigo-700 text-white hover:text-white/90 px-8 py-4 text-lg rounded-full transition-all duration-300 font-medium shadow-lg hover:shadow-xl border border-gray-700 hover:border-indigo-600 relative overflow-hidden group [text-shadow:_0_1px_2px_rgba(255,255,255,0.3)]"
               >
                 <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-indigo-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
                 <span className="relative z-10 group-hover:translate-x-0.5 transition-transform">Get Started</span>
-              </Button>
-              <Button
+              </Link>
+            <Link
+                href="/signup"
                 variant="outline"
                 size="lg"
                 className="border-gray-300 text-gray-700 hover:text-indigo-700 hover:bg-indigo-50 hover:border-indigo-300 px-8 py-4 text-lg rounded-full transition-all duration-300 font-medium hover:shadow-md relative overflow-hidden group [text-shadow:_0_1px_1px_rgba(255,255,255,0.5)]"
               >
                 <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-indigo-100/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
                 <span className="relative z-10 group-hover:translate-x-0.5 transition-transform">Learn More</span>
-              </Button>
+              </Link>
             </div>
           </div>
           <br/>
