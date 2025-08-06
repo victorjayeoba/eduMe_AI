@@ -61,7 +61,7 @@ export default function Partners() {
           <p className="text-lg text-gray-600 uppercase tracking-wider mb-6">COMPLETE LEARNING SOLUTION</p>
          COMPLETE LEARNING SOLUTION  
          <Link
-                href="/signup"
+                href="/signup">
           <Button className="bg-black hover:bg-black/80 text-white px-8 py-3 rounded-full text-lg">
             Try EduMeAI now
           </Button>
