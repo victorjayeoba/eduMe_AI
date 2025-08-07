@@ -23,8 +23,10 @@ interface AuthContextProps {
   logOut: () => Promise<void>;
   signInWithGoogle: () => Promise<void>;
   verifyEmail: (actionCode: string) => Promise<void>;
+  resendVerificationEmail: () => Promise<void>;
   clearError: () => void;
   isEmailVerified: boolean;
+  reloadUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
@@ -37,9 +39,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     try {
-      const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-        setUser(currentUser);
-        setIsEmailVerified(currentUser?.emailVerified || false);
+      const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+        if (currentUser) {
+          // Reload user to get the latest emailVerified status
+          await currentUser.reload();
+          setUser(currentUser);
+          setIsEmailVerified(currentUser.emailVerified);
+        } else {
+          setUser(null);
+          setIsEmailVerified(false);
+        }
         setLoading(false);
       }, (authError) => {
         setError(authError.message);
@@ -101,9 +110,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const logIn = async (email: string, password: string) => {
     try {
       setError(null);
-      await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      
+      // Reload user to get the latest emailVerified status
+      await user.reload();
+      
+      // Check if email is verified
+      if (!user.emailVerified) {
+        setError("Please verify your email address before signing in. Check your inbox and spam folder.");
+        // Optionally sign them out if you want to enforce strict verification
+        // await signOut(auth);
+        throw new Error("Email not verified");
+      }
     } catch (err) {
       console.error("Error logging in:", err);
+      if (err instanceof Error && err.message === "Email not verified") {
+        // Don't override the specific email verification error
+        throw err;
+      }
       const errorMessage = err instanceof Error ? err.message : "Failed to log in";
       setError(errorMessage);
       throw err;
@@ -135,6 +160,39 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const resendVerificationEmail = async () => {
+    try {
+      setError(null);
+      if (!auth.currentUser) {
+        throw new Error("No user logged in");
+      }
+      
+      const actionCodeSettings = {
+        url: `${window.location.origin}/verify?email=${encodeURIComponent(auth.currentUser.email || '')}`,
+        handleCodeInApp: false,
+      };
+      
+      await sendEmailVerification(auth.currentUser, actionCodeSettings);
+      return;
+    } catch (err) {
+      console.error("Error resending verification email:", err);
+      const errorMessage = err instanceof Error ? err.message : "Failed to resend verification email";
+      setError(errorMessage);
+      throw err;
+    }
+  };
+
+  const reloadUser = async () => {
+    try {
+      if (auth.currentUser) {
+        await auth.currentUser.reload();
+        setIsEmailVerified(auth.currentUser.emailVerified);
+      }
+    } catch (err) {
+      console.error("Error reloading user:", err);
+    }
+  };
+
   return (
     <AuthContext.Provider value={{ 
       user, 
@@ -145,8 +203,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       logOut, 
       signInWithGoogle, 
       verifyEmail,
+      resendVerificationEmail,
       clearError,
-      isEmailVerified
+      isEmailVerified,
+      reloadUser
     }}>
       {children}
     </AuthContext.Provider>

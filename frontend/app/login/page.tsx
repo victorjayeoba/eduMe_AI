@@ -209,16 +209,25 @@ export default function LoginPage() {
               <div>
                 <h3 className="font-semibold text-amber-800 text-sm">Email verification required</h3>
                 <p className="text-amber-700 text-xs mt-1 mb-2">
-                  Your email address hasn't been verified. Please check your inbox for the verification link or click below to resend it.
+                  Your email address hasn't been verified. Please check your inbox for the verification link.
                 </p>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={handleResendVerification}
-                  className="text-xs h-8 bg-white border-amber-300 text-amber-700 hover:bg-amber-100"
-                >
-                  Resend verification email
-                </Button>
+                <div className="flex space-x-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={handleResendVerification}
+                    className="text-xs h-8 bg-white border-amber-300 text-amber-700 hover:bg-amber-100"
+                  >
+                    Resend email
+                  </Button>
+                  <Button 
+                    size="sm" 
+                    onClick={() => router.push("/verify")}
+                    className="text-xs h-8 bg-amber-600 text-white hover:bg-amber-700"
+                  >
+                    Verification page
+                  </Button>
+                </div>
               </div>
             </div>
           )}

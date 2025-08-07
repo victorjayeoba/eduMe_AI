@@ -107,6 +107,12 @@ export default function SignupPage() {
           </p>
           <div className="space-y-4">
             <Button
+              onClick={() => router.push("/verify")}
+              className="w-full"
+            >
+              Go to Verification Page
+            </Button>
+            <Button
               variant="outline"
               onClick={() => router.push("/login")}
               className="w-full"
@@ -121,7 +127,7 @@ export default function SignupPage() {
               Return to Homepage
             </Button>
             <p className="text-sm text-gray-500 mt-2">
-              Didn't receive the email? Check your spam folder or try signing up again.
+              Didn't receive the email? Check your spam folder or visit the verification page to resend.
             </p>
           </div>
         </div>
