@@ -122,13 +122,7 @@ export default function AITutoring() {
                 <GraduationCap className="h-5 w-5" />
                 {!isSidebarCollapsed && <span className="ml-3 font-medium">Career Guide</span>}
               </Link>
-              <Link
-                href="/dashboard/exam-prep"
-                className="flex items-center px-4 py-2.5 text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <BookOpen className="h-5 w-5" />
-                {!isSidebarCollapsed && <span className="ml-3 font-medium">Exam Prep</span>}
-              </Link>
+              
             </div>
           </div>
 
