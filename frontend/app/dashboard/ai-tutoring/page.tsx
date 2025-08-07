@@ -35,23 +35,28 @@ export default function AITutoring() {
     console.error("Error loading D-ID script");
   }
 
+  useEffect(() => {
+    // Add custom styles for D-ID agent
+    const style = document.createElement('style');
+    style.innerHTML = `
+      #d-id {
+        width: 100%;
+        height: 100%;
+      }
+      .didagent__messages__container {
+        height: 500px;
+        overflow-y: scroll;
+      }
+    `;
+    document.head.appendChild(style);
+
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
+
   return (
     <div className="flex min-h-screen bg-gray-50">
-      {/* D-ID Script */}
-      <Script
-        src="https://agent.d-id.com/v2/index.js"
-        strategy="afterInteractive"
-        onLoad={handleScriptLoad}
-        onError={handleScriptError}
-        data-mode="full"
-      data-client-key="Z29vZ2xlLW9hdXRoMnwxMTA2MDAwNjY3NDI2NjM4MzMzNzQ6X2NNMktzRkNKQTdYd0NNNTFJYnpT"
-      data-agent-id="v2_agt_9QU6jpY3"
-        data-name="did-agent"
-        data-monitor="true"
-        data-target-id="d-id"
-      />
-{/*         data-client-key="Z29vZ2xlLW9hdXRoMnwxMTQ2Njc2NDY4NzkzODc3ODQ2MzY6ejh1d0FKTEdQTlh3Q0FIWVVFTFdF"
-        data-agent-id="v2_agt_UaMp8MMT" */}
       {/* Mobile Sidebar Toggle */}
       <div className="fixed top-4 left-4 z-50 md:hidden">
         <Button
@@ -209,10 +214,9 @@ export default function AITutoring() {
         <main className="h-screen relative flex flex-col"> 
           <div className="flex-1 relative bg-black">
             {/* D-ID Container - Full Screen */}
-        
             <div id="d-id" className="absolute inset-0 w-full h-full">
               {!didAgentLoaded && (
-                <div className=" inset-0 flex items-center justify-center">
+                <div className="inset-0 flex items-center justify-center">
                   <div className="flex flex-col items-center">
                     <div className="w-12 h-12 border-4 border-t-white border-r-gray-500/50 border-b-gray-500/50 border-l-gray-500/50 rounded-full animate-spin mb-4"></div>
                     <p className="text-white">Loading AI Tutor...</p>
@@ -220,12 +224,24 @@ export default function AITutoring() {
                 </div>
               )}
             </div>
-            
-            {/* Gradient overlay to hide watermark */}
-
           </div>
         </main>
       </div>
+
+      {/* D-ID Script - Using type="module" as in the example */}
+      <Script
+        type="module"
+        src="https://agent.d-id.com/v2/index.js"
+        strategy="afterInteractive"
+        onLoad={handleScriptLoad}
+        onError={handleScriptError}
+        data-mode="full"
+      data-client-key="Z29vZ2xlLW9hdXRoMnwxMTA2MDAwNjY3NDI2NjM4MzMzNzQ6X2NNMktzRkNKQTdYd0NNNTFJYnpT"
+      data-agent-id="v2_agt_9QU6jpY3"       
+        data-name="did-agent"
+        data-monitor="true"
+        data-target-id="d-id"
+      />
     </div>
   )
 } 
