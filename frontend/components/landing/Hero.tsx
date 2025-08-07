@@ -4,7 +4,6 @@ import Head from 'next/head'
 import { motion, useMotionValue, useTransform, useAnimation } from "framer-motion"
 import TrueFocus from "../react-bits/TrueFocus"
 import TextType from "../react-bits/TextType"
-import Link from "next/link"
 import Aurora from "../react-bits/Aurora"
 import Link from "next/link"
 import AnimatedGradient from "../ui/animated-gradient"
