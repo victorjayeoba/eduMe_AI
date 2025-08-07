@@ -64,7 +64,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
     <WalletContext.Provider value={{ address, isConnecting, connectWallet, disconnectWallet, showInstallModal, closeInstallModal }}>
       {children}
       <Dialog open={showInstallModal} onOpenChange={setShowInstallModal}>
-        <DialogContent>
+        <DialogContent className="z-[9999]">
           <DialogHeader>
             <DialogTitle>MetaMask Not Detected</DialogTitle>
             <DialogDescription>

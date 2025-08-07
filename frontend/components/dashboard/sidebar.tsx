@@ -35,7 +35,7 @@ const navItems: NavItem[] = [
   
   // SETTINGS Section
   { icon: Settings, label: "Settings", path: "/dashboard/settings", section: "SETTINGS" },
-  { icon: LogOut, label: "Logout", path: "/logout", section: "SETTINGS" },
+  { icon: LogOut, label: "Logout", path: "/", section: "SETTINGS" },
 ];
 
 export function Sidebar({ expanded, onToggle }: SidebarProps) {
