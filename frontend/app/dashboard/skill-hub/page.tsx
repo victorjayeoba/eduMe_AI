@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
@@ -26,19 +26,58 @@ import {
   Clock,
   Menu,
   X,
-  Star,
   Sparkles,
   Zap,
   ArrowRight,
   Trophy,
 } from "lucide-react"
 import { Input } from "@/components/ui/input"
+import { useAuth } from "@/contexts/auth-context"
+import { doc, getDoc } from "firebase/firestore"
+import { db } from "@/lib/firebase"
 
 export default function SkillHub() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
   const [activeCategory, setActiveCategory] = useState("digital")
-  
+  const { user } = useAuth()
+  const [userProgress, setUserProgress] = useState<{ [courseId: string]: number }>({})
+  const [loading, setLoading] = useState(true)
+
+  // Fetch user progress from Firebase
+  useEffect(() => {
+    if (!user) return
+    
+    const fetchProgress = async () => {
+      try {
+        const userRef = doc(db, "users", user.uid)
+        const userDoc = await getDoc(userRef)
+        
+        if (userDoc.exists()) {
+          const courseProgress = userDoc.data().courseProgress || {}
+          const progressMap: { [courseId: string]: number } = {}
+          
+          Object.keys(courseProgress).forEach(courseId => {
+            const lessons = courseProgress[courseId]
+            const lessonIds = Object.keys(lessons)
+            if (lessonIds.length > 0) {
+              // Get the progress from the first lesson (since each course has one lesson)
+              progressMap[courseId] = lessons[lessonIds[0]].progress || 0
+            }
+          })
+          
+          setUserProgress(progressMap)
+        }
+      } catch (error) {
+        console.error("Error fetching user progress:", error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchProgress()
+  }, [user])
+
   const skillCategories = [
     { id: "digital", name: "Digital Skills", icon: <Code className="h-5 w-5" /> },
     { id: "soft", name: "Soft Skills", icon: <Lightbulb className="h-5 w-5" /> },
@@ -82,12 +121,13 @@ export default function SkillHub() {
       description: "Learn HTML, CSS, and JavaScript to build responsive websites",
       level: "Beginner",
       duration: "8 weeks",
-      progress: 65,
-      image: "/placeholder.jpg",
+      image: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=400&h=300&fit=crop",
       modules: 12,
       completed: 8,
       icon: <Code className="h-6 w-6" />,
       color: "blue",
+      courseId: "web-development",
+      videoId: "FazgJVnrVuI", // YouTube video ID
     },
     {
       id: 2,
@@ -95,12 +135,13 @@ export default function SkillHub() {
       description: "Master data visualization and statistical analysis techniques",
       level: "Intermediate",
       duration: "6 weeks",
-      progress: 40,
-      image: "/placeholder.jpg",
+      image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=300&fit=crop",
       modules: 10,
       completed: 4,
       icon: <LineChart className="h-6 w-6" />,
       color: "green",
+      courseId: "data-analysis",
+      videoId: "VV8iRJ-DS0A", // YouTube video ID
     },
     {
       id: 3,
@@ -108,12 +149,13 @@ export default function SkillHub() {
       description: "Create user-centered designs with industry-standard tools",
       level: "Beginner",
       duration: "5 weeks",
-      progress: 20,
-      image: "/placeholder.jpg",
+      image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=400&h=300&fit=crop",
       modules: 8,
       completed: 1,
       icon: <Layers className="h-6 w-6" />,
       color: "purple",
+      courseId: "ux-ui-design",
+      videoId: "896-7GLZr6E", // YouTube video ID
     },
     {
       id: 4,
@@ -121,12 +163,13 @@ export default function SkillHub() {
       description: "Introduction to machine learning and AI applications",
       level: "Advanced",
       duration: "10 weeks",
-      progress: 10,
-      image: "/placeholder.jpg",
+      image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=300&fit=crop",
       modules: 15,
       completed: 1,
       icon: <Cpu className="h-6 w-6" />,
       color: "amber",
+      courseId: "artificial-intelligence",
+      videoId: "i_LwzRVP7bg", // YouTube video ID
     },
   ]
   
@@ -137,12 +180,13 @@ export default function SkillHub() {
       description: "Develop effective written and verbal communication skills",
       level: "All Levels",
       duration: "4 weeks",
-      progress: 75,
-      image: "/placeholder.jpg",
+      image: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=300&fit=crop",
       modules: 6,
       completed: 4,
       icon: <MessageSquare className="h-6 w-6" />,
       color: "blue",
+      courseId: "communication",
+      videoId: "Bicb80ooEZc", // YouTube video ID
     },
     {
       id: 6,
@@ -150,12 +194,13 @@ export default function SkillHub() {
       description: "Learn to inspire and guide teams to achieve goals",
       level: "Intermediate",
       duration: "6 weeks",
-      progress: 50,
-      image: "/placeholder.jpg",
+      image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=400&h=300&fit=crop",
       modules: 8,
       completed: 4,
       icon: <Users className="h-6 w-6" />,
       color: "green",
+      courseId: "leadership",
+      videoId: "6-shbSFc48E", // YouTube video ID
     },
     {
       id: 7,
@@ -163,12 +208,13 @@ export default function SkillHub() {
       description: "Enhance problem-solving and analytical reasoning skills",
       level: "All Levels",
       duration: "5 weeks",
-      progress: 30,
-      image: "/placeholder.jpg",
+      image: "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400&h=300&fit=crop",
       modules: 7,
       completed: 2,
       icon: <Lightbulb className="h-6 w-6" />,
       color: "purple",
+      courseId: "critical-thinking",
+      videoId: "HeaVRKFeD8k", // YouTube video ID
     },
     {
       id: 8,
@@ -176,42 +222,19 @@ export default function SkillHub() {
       description: "Master techniques to optimize productivity and efficiency",
       level: "Beginner",
       duration: "3 weeks",
-      progress: 90,
-      image: "/placeholder.jpg",
+      image: "https://images.unsplash.com/photo-1506784365847-bbad939e9335?w=400&h=300&fit=crop",
       modules: 5,
       completed: 4,
       icon: <Clock className="h-6 w-6" />,
       color: "amber",
+      courseId: "time-management",
+      videoId: "xItNGPRBQKg", // YouTube video ID
     },
   ]
   
   const activeSkills = activeCategory === "digital" ? digitalSkills : softSkills
   
-  const featuredSkill = activeSkills.find(skill => skill.progress > 0) || activeSkills[0]
-  
-  const recommendedSkills = [
-    {
-      title: "Mobile App Development",
-      category: "Digital Skills",
-      level: "Intermediate",
-      match: "95% match",
-      icon: <Cpu className="h-5 w-5 text-blue-600" />,
-    },
-    {
-      title: "Public Speaking",
-      category: "Soft Skills",
-      level: "Beginner",
-      match: "87% match",
-      icon: <MessageSquare className="h-5 w-5 text-green-600" />,
-    },
-    {
-      title: "Project Management",
-      category: "Soft Skills",
-      level: "Intermediate",
-      match: "82% match",
-      icon: <Layers className="h-5 w-5 text-purple-600" />,
-    },
-  ]
+  const featuredSkill = activeSkills.find(skill => userProgress[skill.courseId] > 0) || activeSkills[0]
 
   return (
     <div className="flex min-h-screen bg-gray-50">
@@ -407,121 +430,86 @@ export default function SkillHub() {
             </div>
           </div>
 
-          {/* Featured Skill */}
-          {/* <Card className="mb-6 overflow-hidden">
-            <div className="grid grid-cols-1 md:grid-cols-2">
-              <div className="p-6">
-                <div className="flex items-center mb-4">
-                  <div className={`h-10 w-10 rounded-lg flex items-center justify-center mr-3 bg-${featuredSkill.color}-100`}>
-                    {featuredSkill.icon}
-                  </div>
-                  <div>
-                    <h2 className="text-xl font-bold">{featuredSkill.title}</h2>
-                    <p className="text-sm text-gray-500">{featuredSkill.level} • {featuredSkill.duration}</p>
-                  </div>
-                </div>
-                
-                <p className="text-gray-600 mb-4">{featuredSkill.description}</p>
-                
-                <div className="mb-4">
-                  <div className="flex justify-between text-sm mb-1">
-                    <span>Progress</span>
-                    <span>{featuredSkill.progress}%</span>
-                  </div>
-                  <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                    <div 
-                      className="h-full bg-black rounded-full" 
-                      style={{ width: `${featuredSkill.progress}%` }}
-                    ></div>
-                  </div>
-                </div>
-                
-                <div className="flex items-center text-sm mb-6">
-                  <span className="text-gray-500">{featuredSkill.completed} of {featuredSkill.modules} modules completed</span>
-                </div>
-                
-                <Button className="bg-black hover:bg-black/80">
-                  Continue Learning
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </div>
-              
-              <div className="relative h-48 md:h-auto">
-                <div className="absolute inset-0 bg-gray-900 opacity-40"></div>
-                <Image
-                  src={featuredSkill.image}
-                  alt={featuredSkill.title}
-                  fill
-                  className="object-cover"
-                />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <Button variant="outline" className="bg-white/80 hover:bg-white">
-                    <Video className="h-5 w-5 mr-2" />
-                    Watch Intro
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </Card> */}
-
           {/* All Skills */}
           <div className="mb-8">
-            {/* <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold">All {activeCategory === "digital" ? "Digital" : "Soft"} Skills</h2>
-              <Button variant="outline" size="sm">
-                View All
-              </Button>
-            </div> */}
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {activeSkills.map((skill) => (
-                <Card key={skill.id} className="overflow-hidden">
-                  <div className="relative h-40">
-                    <Image
-                      src={skill.image}
-                      alt={skill.title}
-                      fill
-                      className="object-cover"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
-                    <div className="absolute bottom-0 left-0 p-4">
-                      <h3 className="text-lg font-bold text-white">{skill.title}</h3>
-                      <p className="text-sm text-white/80">{skill.level}</p>
-                    </div>
-                  </div>
-                  
-                  <CardContent className="p-4">
-                    <div className="mb-3">
-                      <div className="flex justify-between text-sm mb-1">
-                        <span>Progress</span>
-                        <span>{skill.progress}%</span>
+            {loading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {[...Array(6)].map((_, index) => (
+                  <Card key={index} className="overflow-hidden animate-pulse">
+                    <div className="h-40 bg-gray-200"></div>
+                    <CardContent className="p-4">
+                      <div className="h-4 bg-gray-200 rounded mb-2"></div>
+                      <div className="h-3 bg-gray-200 rounded mb-4"></div>
+                      <div className="h-2 bg-gray-200 rounded mb-2"></div>
+                      <div className="flex justify-between">
+                        <div className="h-3 bg-gray-200 rounded w-20"></div>
+                        <div className="h-6 bg-gray-200 rounded w-16"></div>
                       </div>
-                      <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                        <div 
-                          className="h-full bg-black rounded-full" 
-                          style={{ width: `${skill.progress}%` }}
-                        ></div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {activeSkills.map((skill) => {
+                  const progress = userProgress[skill.courseId] || 0
+                  return (
+                    <Card key={skill.id} className="overflow-hidden">
+                      <div className="relative h-40">
+                        <Image
+                          src={skill.image}
+                          alt={skill.title}
+                          fill
+                          className="object-cover"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                        <div className="absolute bottom-0 left-0 p-4">
+                          <h3 className="text-lg font-bold text-white">{skill.title}</h3>
+                          <p className="text-sm text-white/80">{skill.level}</p>
+                        </div>
                       </div>
-                    </div>
-                    
-                    <p className="text-sm text-gray-600 line-clamp-2 mb-4">{skill.description}</p>
-                    
-                    <div className="flex justify-between items-center">
-                      <span className="text-xs text-gray-500">{skill.modules} modules • {skill.duration}</span>
-                      <Button variant="outline" size="sm" className="h-8">
-                        {skill.progress > 0 ? "Continue" : "Start"}
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+                      
+                      <CardContent className="p-4">
+                        <div className="mb-3">
+                          <div className="flex justify-between text-sm mb-1">
+                            <span>Progress</span>
+                            <span>{Math.round(progress)}%</span>
+                          </div>
+                          <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                            <div 
+                              className="h-full bg-black rounded-full transition-all duration-300" 
+                              style={{ width: `${progress}%` }}
+                            ></div>
+                          </div>
+                        </div>
+                        
+                        <p className="text-sm text-gray-600 line-clamp-2 mb-4">{skill.description}</p>
+                        
+                        <div className="flex justify-between items-center">
+                          <span className="text-xs text-gray-500">1 module • 1hr 30 mins</span>
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="h-8"
+                            asChild
+                          >
+                            <Link href={`/dashboard/skill-hub/${skill.courseId || 'web-development'}`}>
+                              {progress === 100 ? "Retake" : progress > 0 ? "Continue" : "Start"}
+                            </Link>
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )
+                })}
+              </div>
+            )}
           </div>
 
           {/* Skill Stats and Recommendations */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Skill Stats */}
-            <Card className="lg:col-span-1">
+            <Card className="lg:col-span-3">
               <CardHeader>
                 <CardTitle>Your Skill Stats</CardTitle>
                 <CardDescription>Track your learning progress</CardDescription>
@@ -534,7 +522,9 @@ export default function SkillHub() {
                   <div className="flex-1">
                     <div className="flex justify-between">
                       <h4 className="font-medium">Skills in Progress</h4>
-                      <span className="font-bold">6</span>
+                      <span className="font-bold">
+                        {Object.values(userProgress).filter(p => p > 0 && p < 100).length}
+                      </span>
                     </div>
                     <p className="text-xs text-gray-500">Across both categories</p>
                   </div>
@@ -546,8 +536,10 @@ export default function SkillHub() {
                   </div>
                   <div className="flex-1">
                     <div className="flex justify-between">
-                      <h4 className="font-medium">Learning Hours</h4>
-                      <span className="font-bold">42.5</span>
+                      <h4 className="font-medium">Completed Courses</h4>
+                      <span className="font-bold">
+                        {Object.values(userProgress).filter(p => p >= 100).length}
+                      </span>
                     </div>
                     <p className="text-xs text-gray-500">This month</p>
                   </div>
@@ -559,47 +551,15 @@ export default function SkillHub() {
                   </div>
                   <div className="flex-1">
                     <div className="flex justify-between">
-                      <h4 className="font-medium">Certificates Earned</h4>
-                      <span className="font-bold">3</span>
+                      <h4 className="font-medium">Average Progress</h4>
+                      <span className="font-bold">
+                        {Object.values(userProgress).length > 0 
+                          ? Math.round(Object.values(userProgress).reduce((a, b) => a + b, 0) / Object.values(userProgress).length)
+                          : 0}%
+                      </span>
                     </div>
-                    <p className="text-xs text-gray-500">View in profile</p>
+                    <p className="text-xs text-gray-500">Across all courses</p>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-            
-            {/* Recommendations */}
-            <Card className="lg:col-span-2">
-              <CardHeader>
-                <CardTitle>Recommended for You</CardTitle>
-                <CardDescription>Based on your learning history and goals</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {recommendedSkills.map((skill, index) => (
-                    <div key={index} className="flex items-center p-3 bg-gray-50 rounded-lg border border-gray-200">
-                      <div className="h-12 w-12 rounded-lg flex items-center justify-center mr-4">
-                        {skill.icon}
-                      </div>
-                      <div className="flex-1">
-                        <h4 className="font-medium">{skill.title}</h4>
-                        <div className="flex items-center text-sm text-gray-500">
-                          <span>{skill.category}</span>
-                          <span className="mx-2">•</span>
-                          <span>{skill.level}</span>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <div className="flex items-center mb-1">
-                          <Star className="h-4 w-4 text-amber-400 mr-1" />
-                          <span className="text-sm font-medium">{skill.match}</span>
-                        </div>
-                        <Button variant="outline" size="sm">
-                          Explore
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
                 </div>
               </CardContent>
             </Card>
