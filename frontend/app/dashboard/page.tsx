@@ -483,10 +483,10 @@ export default function Dashboard() {
               gems={userProfile?.gems || 0}
               lastUpdated={getCurrentTime()}
               onRefresh={() => {
-                setLastMinuteUpdate(new Date());
-                refreshLeaderboard();
-                console.log("Manual refresh triggered at:", getCurrentTime());
-              }}
+                          setLastMinuteUpdate(new Date());
+                          refreshLeaderboard();
+                          console.log("Manual refresh triggered at:", getCurrentTime());
+                        }}
             />
 
             {/* Feature Cards */}
@@ -515,7 +515,7 @@ export default function Dashboard() {
                 leaderboardData={leaderboardData}
                 currentUserName={userProfile?.name || "You"}
               />
-            </div>
+          </div>
           </div>
         </div>
       </main>

@@ -23,10 +23,10 @@ const navItems: NavItem[] = [
   { icon: Home, label: "Dashboard", path: "/dashboard", section: "MAIN" },
   { icon: GraduationCap, label: "AI Tutoring", path: "/dashboard/ai-tutoring", section: "MAIN" },
   { icon: Briefcase, label: "Career Guide", path: "/dashboard/career-guide", section: "MAIN" },
-  { icon: BookOpen, label: "Exam Prep", path: "/dashboard/exam-prep", section: "MAIN" },
+  { icon: Target, label: "Skill Hub", path: "/dashboard/skill-hub", section: "MAIN" },
   
   // LEARNING Section
-  { icon: Target, label: "Skill Hub", path: "/dashboard/skill-hub", section: "LEARNING" },
+
   { icon: Trophy, label: "Contests", path: "/dashboard/contests", section: "LEARNING" },
   
   // ENGAGEMENT Section

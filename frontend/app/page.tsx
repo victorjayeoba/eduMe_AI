@@ -205,8 +205,8 @@ export default function EduMeAiLanding() {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-        <div className={`md:hidden ${isScrolled ? 'fixed top-24 left-4 right-4' : 'relative mt-0 mx-4'} z-50 ${isScrolled ? 'bg-black/80 text-white' : 'bg-white/80'} backdrop-blur-md rounded-xl shadow-md ${isScrolled ? 'border-gray-700/50' : 'border-gray-100/50'} border`}>
-            <div className="px-4 py-2 space-y-2">
+        <div className={`md:hidden ${isScrolled ? 'fixed top-24 left-4 right-4' : 'fixed mt-[70px] w-[95%] mx-4 ml-[10px'} z-50 ${isScrolled ? 'bg-black/80 text-white' : 'bg-white/80'} backdrop-blur-md rounded-xl z-[9999] shadow-md ${isScrolled ? 'border-gray-700/50' : 'border-gray-100/50'} border`}>
+            <div className="px-6 py-2 space-y-2">
             {user && (
               <Link href="/dashboard" className={`block py-2 ${isScrolled ? 'text-white hover:text-gray-300' : 'text-black hover:text-gray-600'}`}>
                 Dashboard
