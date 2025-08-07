@@ -1,8 +1,11 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
+import { useAuth } from "@/contexts/auth-context"
+import { doc, getDoc, collection, query, orderBy, limit, getDocs } from "firebase/firestore"
+import { db } from "@/lib/firebase"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -43,21 +46,110 @@ import {
   Medal,
   ArrowUp,
   ArrowDown,
+  Gem,
 } from "lucide-react"
 
 export default function Leaderboard() {
+  const { user: authUser } = useAuth()
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
   const [activeTab, setActiveTab] = useState("overall")
   const [searchQuery, setSearchQuery] = useState("")
+  const [loading, setLoading] = useState(true)
+  const [userProfile, setUserProfile] = useState<{
+    name: string
+    email: string
+    educationLevel: string
+    totalTimeSpent: number
+    gems: number
+    lastActive: Date
+  } | null>(null)
+  const [leaderboardData, setLeaderboardData] = useState<Array<{
+    id: string
+    name: string
+    gems: number
+    totalTimeSpent: number
+    rank: number
+  }>>([])
 
-  // Sample user data
-  const user = {
-    name: "Adedeji",
-    xp: 1250,
-    avatar: "/placeholder-user.jpg",
-    rank: 3
+  // Fetch user profile and leaderboard data
+  useEffect(() => {
+    const fetchData = async () => {
+      if (authUser) {
+        try {
+          // Fetch user profile
+          const userDoc = await getDoc(doc(db, "users", authUser.uid))
+          if (userDoc.exists()) {
+            const data = userDoc.data()
+            setUserProfile({
+              name: data.name || authUser.displayName || "User",
+              email: data.email || authUser.email || "",
+              educationLevel: data.educationLevel || "",
+              totalTimeSpent: data.totalTimeSpent || 0,
+              gems: data.gems || 0,
+              lastActive: data.lastActive ? new Date(data.lastActive.toDate()) : new Date()
+            })
+          }
+
+          // Fetch leaderboard data
+          const usersQuery = query(
+            collection(db, "users"),
+            orderBy("gems", "desc"),
+            limit(50)
+          )
+          
+          const querySnapshot = await getDocs(usersQuery)
+          const leaderboard = querySnapshot.docs.map((doc, index) => ({
+            id: doc.id,
+            name: doc.data().name || "Anonymous User",
+            gems: doc.data().gems || 0,
+            totalTimeSpent: doc.data().totalTimeSpent || 0,
+            rank: index + 1
+          }))
+          
+          console.log('🏆 Full Leaderboard Data Loaded:')
+          leaderboard.forEach((user, index) => {
+            console.log(`   ${index + 1}. ${user.name}: ${user.gems} gems (${user.totalTimeSpent} minutes)`)
+          })
+          console.log('---')
+          
+          setLeaderboardData(leaderboard)
+        } catch (error) {
+          console.error("Error fetching data:", error)
+        } finally {
+          setLoading(false)
+        }
+      } else {
+        setLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [authUser])
+
+  // Format time display
+  const formatTime = (minutes: number) => {
+    const hours = Math.floor(minutes / 60)
+    const remainingMinutes = minutes % 60
+    
+    if (hours > 0) {
+      return `${hours}h ${remainingMinutes}m`
+    } else {
+      return `${remainingMinutes}m`
+    }
   }
+
+  // Get current user's rank
+  const getCurrentUserRank = () => {
+    if (!userProfile) return 0
+    const userEntry = leaderboardData.find(user => user.name === userProfile.name)
+    return userEntry ? userEntry.rank : 0
+  }
+
+  // Filter leaderboard based on search
+  const filteredLeaderboard = leaderboardData.filter(user =>
+    user.name.toLowerCase().includes(searchQuery.toLowerCase())
+  )
 
   const tabs = [
     { id: "overall", name: "Overall", icon: <Trophy className="h-4 w-4" /> },
@@ -65,62 +157,6 @@ export default function Leaderboard() {
     { id: "monthly", name: "Monthly", icon: <Calendar className="h-4 w-4" /> },
     { id: "subjects", name: "By Subject", icon: <BookOpen className="h-4 w-4" /> },
   ]
-
-  // Sample leaderboard data
-  const overallLeaderboard = [
-    { id: 1, name: "Sarah Johnson", avatar: "/placeholder-user.jpg", xp: 3450, change: "up", streak: 15, level: 25, subjects: ["Math", "Physics"] },
-    { id: 2, name: "Michael Chen", avatar: "/placeholder-user.jpg", xp: 3120, change: "up", streak: 12, level: 23, subjects: ["Chemistry", "Biology"] },
-    { id: 3, name: user.name, avatar: user.avatar, xp: user.xp, change: "down", streak: 8, level: 18, subjects: ["Math", "English"] },
-    { id: 4, name: "David Kim", avatar: "/placeholder-user.jpg", xp: 1180, change: "up", streak: 6, level: 16, subjects: ["Physics", "Chemistry"] },
-    { id: 5, name: "Lisa Wang", avatar: "/placeholder-user.jpg", xp: 1050, change: "down", streak: 4, level: 15, subjects: ["Biology", "Math"] },
-    { id: 6, name: "Alex Rodriguez", avatar: "/placeholder-user.jpg", xp: 980, change: "up", streak: 3, level: 14, subjects: ["English", "History"] },
-    { id: 7, name: "Emma Thompson", avatar: "/placeholder-user.jpg", xp: 920, change: "up", streak: 2, level: 13, subjects: ["Math", "Physics"] },
-    { id: 8, name: "James Wilson", avatar: "/placeholder-user.jpg", xp: 890, change: "down", streak: 1, level: 12, subjects: ["Chemistry", "Biology"] },
-    { id: 9, name: "Maria Garcia", avatar: "/placeholder-user.jpg", xp: 850, change: "up", streak: 5, level: 11, subjects: ["English", "Math"] },
-    { id: 10, name: "Robert Brown", avatar: "/placeholder-user.jpg", xp: 820, change: "down", streak: 2, level: 10, subjects: ["Physics", "Chemistry"] },
-  ]
-
-  const weeklyLeaderboard = [
-    { id: 1, name: "Emma Thompson", avatar: "/placeholder-user.jpg", xp: 450, change: "up", streak: 7, level: 13, subjects: ["Math", "Physics"] },
-    { id: 2, name: "Michael Chen", avatar: "/placeholder-user.jpg", xp: 420, change: "up", streak: 7, level: 23, subjects: ["Chemistry", "Biology"] },
-    { id: 3, name: user.name, avatar: user.avatar, xp: 380, change: "up", streak: 7, level: 18, subjects: ["Math", "English"] },
-    { id: 4, name: "Sarah Johnson", avatar: "/placeholder-user.jpg", xp: 350, change: "down", streak: 6, level: 25, subjects: ["Math", "Physics"] },
-    { id: 5, name: "David Kim", avatar: "/placeholder-user.jpg", xp: 320, change: "up", streak: 5, level: 16, subjects: ["Physics", "Chemistry"] },
-  ]
-
-  const subjectLeaderboard = [
-    { id: "mathematics", name: "Mathematics", icon: "📐", topUsers: [
-      { name: "Sarah Johnson", xp: 1200, rank: 1 },
-      { name: user.name, xp: 980, rank: 2 },
-      { name: "Michael Chen", xp: 850, rank: 3 },
-    ]},
-    { id: "physics", name: "Physics", icon: "⚡", topUsers: [
-      { name: "David Kim", xp: 1100, rank: 1 },
-      { name: "Emma Thompson", xp: 920, rank: 2 },
-      { name: "Sarah Johnson", xp: 890, rank: 3 },
-    ]},
-    { id: "chemistry", name: "Chemistry", icon: "🧪", topUsers: [
-      { name: "Michael Chen", xp: 1350, rank: 1 },
-      { name: "David Kim", xp: 1100, rank: 2 },
-      { name: "James Wilson", xp: 950, rank: 3 },
-    ]},
-    { id: "biology", name: "Biology", icon: "🧬", topUsers: [
-      { name: "Lisa Wang", xp: 980, rank: 1 },
-      { name: "Michael Chen", xp: 920, rank: 2 },
-      { name: "James Wilson", xp: 850, rank: 3 },
-    ]},
-  ]
-
-  const getCurrentLeaderboard = () => {
-    switch (activeTab) {
-      case "weekly":
-        return weeklyLeaderboard
-      case "monthly":
-        return overallLeaderboard.slice(0, 5) // For demo, using overall data
-      default:
-        return overallLeaderboard
-    }
-  }
 
   const getRankIcon = (rank: number) => {
     switch (rank) {
@@ -133,6 +169,18 @@ export default function Leaderboard() {
       default:
         return null
     }
+  }
+
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading leaderboard...</p>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -308,11 +356,11 @@ export default function Leaderboard() {
               <div className="flex items-center gap-4">
                 <div className="flex items-center bg-white px-4 py-2 rounded-lg border shadow-sm">
                   <Trophy className="h-5 w-5 text-amber-500 mr-2" />
-                  <span className="font-semibold text-gray-900">Rank #{user.rank}</span>
+                  <span className="font-semibold text-gray-900">Rank #{getCurrentUserRank()}</span>
                 </div>
                 <div className="flex items-center bg-white px-4 py-2 rounded-lg border shadow-sm">
-                  <Zap className="h-5 w-5 text-amber-500 mr-2" />
-                  <span className="font-semibold text-gray-900">{user.xp} XP</span>
+                  <Gem className="h-5 w-5 text-amber-500 mr-2" />
+                  <span className="font-semibold text-gray-900">{userProfile?.gems || 0} Gems</span>
                 </div>
               </div>
             </div>
@@ -346,101 +394,59 @@ export default function Leaderboard() {
             </div>
 
             {/* Leaderboard Content */}
-            {activeTab === "subjects" ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {subjectLeaderboard.map((subject) => (
-                  <Card key={subject.id} className="border-0 shadow-sm">
-                    <CardHeader className="pb-3">
-                      <CardTitle className="flex items-center text-lg">
-                        <span className="text-2xl mr-2">{subject.icon}</span>
-                        {subject.name}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-3">
-                        {subject.topUsers.map((user, index) => (
-                          <div key={index} className="flex items-center p-2 bg-gray-50 rounded-lg">
-                            <div className="w-6 text-center font-bold text-gray-500 mr-3">
-                              {user.rank}
-                            </div>
-                            <div className="flex-1">
-                              <h4 className="font-medium text-sm">{user.name}</h4>
-                            </div>
-                            <div className="flex items-center">
-                              <Zap className="h-4 w-4 text-amber-500 mr-1" />
-                              <span className="font-bold text-sm">{user.xp}</span>
-                            </div>
-                          </div>
-                        ))}
+            <Card className="border-0 shadow-sm">
+              <CardContent className="p-6">
+                <div className="space-y-2">
+                  {filteredLeaderboard.map((user, index) => (
+                    <div
+                      key={user.id}
+                      className={`flex items-center p-4 rounded-lg ${
+                        user.name === userProfile?.name ? "bg-blue-50 border border-blue-100" : "hover:bg-gray-50"
+                      }`}
+                    >
+                      <div className="w-12 text-center">
+                        <div className="flex items-center justify-center">
+                          {getRankIcon(user.rank)}
+                          <span className={`font-bold text-lg ${user.rank <= 3 ? "ml-2" : ""}`}>
+                            {user.rank}
+                          </span>
+                        </div>
                       </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            ) : (
-              <Card className="border-0 shadow-sm">
-                <CardContent className="p-6">
-                  <div className="space-y-2">
-                    {getCurrentLeaderboard().map((user, index) => (
-                      <div
-                        key={user.id}
-                        className={`flex items-center p-4 rounded-lg ${
-                          user.name === user.name ? "bg-blue-50 border border-blue-100" : "hover:bg-gray-50"
-                        }`}
-                      >
-                        <div className="w-12 text-center">
-                          <div className="flex items-center justify-center">
-                            {getRankIcon(index + 1)}
-                            <span className={`font-bold text-lg ${index < 3 ? "ml-2" : ""}`}>
-                              {index + 1}
-                            </span>
-                          </div>
+                      <div className="h-12 w-12 rounded-full overflow-hidden mx-4 bg-gray-200 flex items-center justify-center">
+                        <span className="text-lg font-medium text-gray-600">
+                          {user.name.charAt(0).toUpperCase()}
+                        </span>
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <h4 className={`font-bold text-lg ${user.name === userProfile?.name ? "text-blue-600" : ""}`}>
+                            {user.name}
+                          </h4>
+                          {user.name === userProfile?.name && (
+                            <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">You</span>
+                          )}
                         </div>
-                        <div className="h-12 w-12 rounded-full overflow-hidden mx-4">
-                          <Image src={user.avatar} alt={user.name} width={48} height={48} />
+                        <div className="flex items-center gap-4 text-sm text-gray-500 mt-1">
+                          <span className="flex items-center">
+                            <Clock className="h-3 w-3 mr-1" />
+                            {formatTime(user.totalTimeSpent)}
+                          </span>
                         </div>
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2">
-                            <h4 className={`font-bold text-lg ${user.name === user.name ? "text-blue-600" : ""}`}>
-                              {user.name}
-                            </h4>
-                            {user.name === user.name && (
-                              <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">You</span>
-                            )}
-                          </div>
-                          <div className="flex items-center gap-4 text-sm text-gray-500 mt-1">
-                            <span>Level {user.level}</span>
-                            <span>•</span>
-                            <span className="flex items-center">
-                              <Flame className="h-3 w-3 mr-1" />
-                              {user.streak} day streak
-                            </span>
-                            <span>•</span>
-                            <span>{user.subjects.join(", ")}</span>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-4">
-                          <div className="text-right">
-                            <div className="flex items-center">
-                              <Zap className="h-5 w-5 text-amber-500 mr-2" />
-                              <span className="font-bold text-xl">{user.xp.toLocaleString()}</span>
-                            </div>
-                            <p className="text-sm text-gray-500">XP</p>
-                          </div>
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <div className="text-right">
                           <div className="flex items-center">
-                            {user.change === "up" ? (
-                              <ArrowUp className="h-5 w-5 text-green-500" />
-                            ) : (
-                              <ArrowDown className="h-5 w-5 text-red-500" />
-                            )}
+                            <Gem className="h-5 w-5 text-amber-500 mr-2" />
+                            <span className="font-bold text-xl">{user.gems}</span>
                           </div>
+                          <p className="text-sm text-gray-500">Gems</p>
                         </div>
                       </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </main>

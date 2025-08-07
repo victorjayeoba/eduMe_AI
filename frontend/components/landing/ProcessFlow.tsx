@@ -1,6 +1,5 @@
 import { useEffect, useRef } from "react";
 import Link from "next/link";
-
 const steps = [
   {
     title: "Engage with your AI tutor",
