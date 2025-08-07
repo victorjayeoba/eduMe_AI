@@ -19,11 +19,13 @@ import {
   Footer
 } from "@/components/landing"
 import Aurora from "@/components/react-bits/Aurora"
+import { useWallet } from "@/contexts/wallet-context";
 
 export default function EduMeAiLanding() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const { user, logOut } = useAuth()
+  const { address, isConnecting, connectWallet, disconnectWallet } = useWallet();
 
   // Add scroll event listener to detect when page is scrolled
   useEffect(() => {
@@ -168,6 +170,28 @@ export default function EduMeAiLanding() {
                   </Button>
                 </>
               )}
+              {/* Wallet Button */}
+              {address ? (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="border-emerald-500 text-emerald-600 bg-emerald-50 hover:bg-emerald-100 px-4 py-2 rounded-[24px] font-mono"
+                  onClick={disconnectWallet}
+                  title={address}
+                >
+                  {address.slice(0, 6)}...{address.slice(-4)}
+                </Button>
+              ) : (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="border-emerald-500 text-emerald-600 bg-white hover:bg-emerald-50 px-4 py-2 rounded-[24px]"
+                  onClick={connectWallet}
+                  disabled={isConnecting}
+                >
+                  {isConnecting ? 'Connecting...' : 'Connect Wallet'}
+                </Button>
+              )}
             </div>
 
             {/* Mobile menu button */}
@@ -245,6 +269,28 @@ export default function EduMeAiLanding() {
                     <Link href="/signup">Sign Up</Link>
                   </Button>
                 </>
+              )}
+              {/* Wallet Button (Mobile) */}
+              {address ? (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="border-emerald-500 text-emerald-600 bg-emerald-50 hover:bg-emerald-100 px-4 w-full rounded-[24px] font-mono"
+                  onClick={disconnectWallet}
+                  title={address}
+                >
+                  {address.slice(0, 6)}...{address.slice(-4)}
+                </Button>
+              ) : (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="border-emerald-500 text-emerald-600 bg-white hover:bg-emerald-50 px-4 w-full rounded-[24px]"
+                  onClick={connectWallet}
+                  disabled={isConnecting}
+                >
+                  {isConnecting ? 'Connecting...' : 'Connect Wallet'}
+                </Button>
               )}
             </div>
             </div>

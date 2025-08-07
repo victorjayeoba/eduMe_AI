@@ -5,6 +5,7 @@ import './globals.css'
 import { AuthProvider } from '@/contexts/auth-context'
 import { ThemeProvider } from '@/components/theme-provider'
 import { Toaster } from 'sonner'
+import { WalletProvider } from '@/contexts/wallet-context'
 
 export const metadata: Metadata = {
   title: 'EduMeAI - AI-Powered Learning Platform',
@@ -39,7 +40,9 @@ html {
           enableSystem
           disableTransitionOnChange
         >
-          <AuthProvider>{children}</AuthProvider>
+          <AuthProvider>
+            <WalletProvider>{children}</WalletProvider>
+          </AuthProvider>
           <Toaster position="top-right" />
         </ThemeProvider>
       </body>
