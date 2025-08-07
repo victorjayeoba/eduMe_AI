@@ -17,6 +17,9 @@ interface UserProfile {
   name: string
   educationLevel: string
   email: string
+  totalTimeSpent: number
+  gems: number
+  lastActive: Date
   createdAt: Date
   updatedAt: Date
 }
@@ -86,6 +89,9 @@ export default function OnboardingPage() {
         name: formData.name.trim(),
         educationLevel: formData.educationLevel,
         email: user.email || "",
+        totalTimeSpent: 0,
+        gems: 0,
+        lastActive: new Date(),
         createdAt: new Date(),
         updatedAt: new Date()
       }

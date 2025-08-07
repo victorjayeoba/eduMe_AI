@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { useAuth } from "@/contexts/auth-context"
-import { doc, getDoc } from "firebase/firestore"
+import { doc, getDoc, updateDoc, collection, query, orderBy, limit, getDocs } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -35,6 +35,7 @@ import {
   ArrowDown,
   Zap,
   Trophy,
+  Gem,
 } from "lucide-react"
 
 export default function Dashboard() {
@@ -45,10 +46,20 @@ export default function Dashboard() {
     name: string
     email: string
     educationLevel: string
+    totalTimeSpent: number
+    gems: number
+    lastActive: Date
   } | null>(null)
   const [loading, setLoading] = useState(true)
+  const [lastMinuteUpdate, setLastMinuteUpdate] = useState<Date | null>(null)
+  const [leaderboardData, setLeaderboardData] = useState<Array<{
+    id: string
+    name: string
+    gems: number
+    totalTimeSpent: number
+  }>>([])
 
-  // Fetch user profile from Firestore
+  // Fetch user profile and leaderboard from Firestore
   useEffect(() => {
     const fetchUserProfile = async () => {
       if (authUser) {
@@ -56,10 +67,24 @@ export default function Dashboard() {
           const userDoc = await getDoc(doc(db, "users", authUser.uid))
           if (userDoc.exists()) {
             const data = userDoc.data()
+            const initialTimeSpent = data.totalTimeSpent || 0
+            const initialGems = data.gems || 0
+            
+            console.log('🎯 Initial User Profile Loaded:')
+            console.log(`   User: ${data.name || authUser.displayName || "User"}`)
+            console.log(`   Total Time Spent: ${initialTimeSpent} minutes`)
+            console.log(`   Current Gems: ${initialGems}`)
+            console.log(`   Gem Calculation: Math.floor(${initialTimeSpent} / 5) = ${Math.floor(initialTimeSpent / 5)}`)
+            console.log(`   Time until next gem: ${5 - (initialTimeSpent % 5)} minutes`)
+            console.log('---')
+            
             setUserProfile({
               name: data.name || authUser.displayName || "User",
               email: data.email || authUser.email || "",
-              educationLevel: data.educationLevel || ""
+              educationLevel: data.educationLevel || "",
+              totalTimeSpent: initialTimeSpent,
+              gems: initialGems,
+              lastActive: data.lastActive ? new Date(data.lastActive.toDate()) : new Date()
             })
           } else {
             // If no profile exists, redirect to onboarding
@@ -76,38 +101,129 @@ export default function Dashboard() {
       }
     }
 
+    const fetchLeaderboard = async () => {
+      try {
+        // Query users collection, order by gems descending, limit to top 10
+        const usersQuery = query(
+          collection(db, "users"),
+          orderBy("gems", "desc"),
+          limit(10)
+        )
+        
+        const querySnapshot = await getDocs(usersQuery)
+        const leaderboard = querySnapshot.docs.map((doc, index) => ({
+          id: doc.id,
+          name: doc.data().name || "Anonymous User",
+          gems: doc.data().gems || 0,
+          totalTimeSpent: doc.data().totalTimeSpent || 0
+        }))
+        
+        console.log('🏆 Leaderboard Data Loaded:')
+        leaderboard.forEach((user, index) => {
+          console.log(`   ${index + 1}. ${user.name}: ${user.gems} gems (${user.totalTimeSpent} minutes)`)
+        })
+        console.log('---')
+        
+        setLeaderboardData(leaderboard)
+      } catch (error) {
+        console.error("Error fetching leaderboard:", error)
+      }
+    }
+
     fetchUserProfile()
+    fetchLeaderboard()
   }, [authUser])
 
-  // Sample metrics data
+  // Update time spent every minute
+  useEffect(() => {
+    if (userProfile && authUser) {
+      let minuteTimer: NodeJS.Timeout
+
+      const updateTimeSpent = async () => {
+        if (!document.hidden) {
+          const newTotalTime = userProfile.totalTimeSpent + 1
+          const newGems = Math.floor(newTotalTime / 5) // 1 gem per 5 minutes
+          
+          // Console logging for debugging
+          console.log('🕐 Time Tracking Update:')
+          console.log(`   Previous Time Spent: ${userProfile.totalTimeSpent} minutes`)
+          console.log(`   New Time Spent: ${newTotalTime} minutes`)
+          console.log(`   Previous Gems: ${userProfile.gems}`)
+          console.log(`   New Gems: ${newGems}`)
+          console.log(`   Gem Calculation: Math.floor(${newTotalTime} / 5) = ${newGems}`)
+          console.log(`   Time since last gem: ${newTotalTime % 5} minutes`)
+          console.log('---')
+          
+          try {
+            await updateDoc(doc(db, "users", authUser.uid), {
+              totalTimeSpent: newTotalTime,
+              gems: newGems,
+              lastActive: new Date()
+            })
+            
+            setUserProfile(prev => prev ? {
+              ...prev,
+              totalTimeSpent: newTotalTime,
+              gems: newGems,
+              lastActive: new Date()
+            } : null)
+            
+            setLastMinuteUpdate(new Date())
+          } catch (error) {
+            console.error("Error updating user metrics:", error)
+          }
+        }
+      }
+
+      // Update every minute (60000ms)
+      minuteTimer = setInterval(updateTimeSpent, 60000)
+
+      // Initial update if needed
+      if (!lastMinuteUpdate) {
+        updateTimeSpent()
+      }
+
+      return () => {
+        if (minuteTimer) {
+          clearInterval(minuteTimer)
+        }
+      }
+    }
+  }, [userProfile, authUser, lastMinuteUpdate])
+
+  // Format time display
+  const formatTime = (minutes: number) => {
+    const hours = Math.floor(minutes / 60)
+    const remainingMinutes = minutes % 60
+    
+    if (hours > 0) {
+      return `${hours}h ${remainingMinutes}m`
+    } else {
+      return `${remainingMinutes}m`
+    }
+  }
+
+  // Sample metrics data with real-time updates
   const metrics = [
     { 
-      title: "Study Hours", 
-      value: "42.5h", 
-      change: "+15%", 
+      title: "Time Spent", 
+      value: userProfile ? formatTime(userProfile.totalTimeSpent) : "9m", 
+      change: "+1m", 
       changeType: "increase", 
       icon: Clock,
       iconBg: "bg-gray-100", 
       iconColor: "text-gray-600" 
     },
     { 
-      title: "Assignments", 
-      value: "28/30", 
-      change: "+8", 
+      title: "Gems Earned", 
+      value: userProfile ? `${userProfile.gems}` : "0", 
+      change: "+1", 
       changeType: "increase", 
-      icon: Target,
-      iconBg: "bg-gray-100", 
-      iconColor: "text-gray-600" 
+      icon: Gem,
+      iconBg: "bg-amber-100", 
+      iconColor: "text-amber-600" 
     },
-    { 
-      title: "Quiz Score", 
-      value: "92%", 
-      change: "+5%", 
-      changeType: "increase", 
-      icon: Award,
-      iconBg: "bg-gray-100", 
-      iconColor: "text-gray-600" 
-    }
+
   ]
 
   // Sample progress data for weekly chart
@@ -121,19 +237,6 @@ export default function Dashboard() {
     { day: "Sun", hours: 6.9 },
   ]
 
-  // Sample upcoming events
-  // const upcomingEvents = [
-  //   { id: 1, title: "Chemistry Group Study", time: "Tomorrow, 4:00 PM", duration: "60 min", participants: 5 },
-  //   { id: 2, title: "IELTS Speaking Practice", time: "Friday, 2:30 PM", duration: "45 min", participants: 3 },
-  // ]
-
-  // Sample leaderboard preview data
-  const leaderboardPreview = [
-    { id: 1, name: "Sarah J.", avatar: "/placeholder-user.jpg", xp: 2450, change: "up" },
-    { id: 2, name: "Michael T.", avatar: "/placeholder-user.jpg", xp: 2380, change: "up" },
-    { id: 3, name: userProfile?.name || "You", avatar: "/placeholder-user.jpg", xp: 1250, change: "down" },
-  ]
-
   // Get current time for last updated
   const getCurrentTime = () => {
     const now = new Date()
@@ -143,6 +246,35 @@ export default function Dashboard() {
       second: '2-digit',
       hour12: true 
     })
+  }
+
+  // Function to refresh leaderboard data
+  const refreshLeaderboard = async () => {
+    try {
+      const usersQuery = query(
+        collection(db, "users"),
+        orderBy("gems", "desc"),
+        limit(10)
+      )
+      
+      const querySnapshot = await getDocs(usersQuery)
+      const leaderboard = querySnapshot.docs.map((doc, index) => ({
+        id: doc.id,
+        name: doc.data().name || "Anonymous User",
+        gems: doc.data().gems || 0,
+        totalTimeSpent: doc.data().totalTimeSpent || 0
+      }))
+      
+      console.log('🔄 Leaderboard Refreshed:')
+      leaderboard.forEach((user, index) => {
+        console.log(`   ${index + 1}. ${user.name}: ${user.gems} gems (${user.totalTimeSpent} minutes)`)
+      })
+      console.log('---')
+      
+      setLeaderboardData(leaderboard)
+    } catch (error) {
+      console.error("Error refreshing leaderboard:", error)
+    }
   }
 
   // Show loading state while fetching user profile
@@ -345,7 +477,7 @@ export default function Dashboard() {
                   {/* Right side - Metrics and Buttons */}
                   <div className="lg:w-2/3">
                     {/* Metrics Grid */}
-                    <div className="grid grid-cols-3 gap-3 mb-4">
+                    <div className="grid grid-cols-2 gap-3 mb-4">
                       {metrics.map((metric, index) => {
                         const Icon = metric.icon;
                         return (
@@ -373,6 +505,11 @@ export default function Dashboard() {
                       <Button 
                         className="bg-gray-600 hover:bg-gray-500 text-white border-0 flex items-center flex-1"
                         size="sm"
+                        onClick={() => {
+                          setLastMinuteUpdate(new Date());
+                          refreshLeaderboard();
+                          console.log("Manual refresh triggered at:", getCurrentTime());
+                        }}
                       >
                         <RefreshCw className="h-3 w-3 mr-1.5" />
                         Refresh
@@ -380,6 +517,7 @@ export default function Dashboard() {
                       <Button 
                         className="bg-white hover:bg-gray-100 text-gray-800 border border-gray-300 flex items-center flex-1"
                         size="sm"
+                        onClick={() => window.location.href = "/dashboard/ai-tutoring"}
                       >
                         <Plus className="h-3 w-3 mr-1.5" />
                         Start Learning
@@ -393,129 +531,138 @@ export default function Dashboard() {
             {/* Feature Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {/* Start Tutoring Card */}
-              <Card className="overflow-hidden border-0 shadow-sm bg-white hover:shadow-md transition-all duration-300 group">
-                <div className="relative h-32 bg-gradient-to-br from-blue-500 to-blue-600">
-                  <video 
-                    className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-300"
-                    autoPlay 
-                    muted 
-                    loop
-                    playsInline
-                  >
-                    <source src="/talkingPreview1.mp4" type="video/mp4" />
-                  </video>
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-                </div>
-                <CardContent className="p-4">
-                  <div className="flex items-start justify-between mb-3">
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-800 mb-1">Start Tutoring</h3>
-                      <p className="text-sm text-gray-600">AI-powered learning sessions</p>
-                    </div>
-                    <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
-                      <Video className="h-5 w-5 text-white" />
-                    </div>
+              <Link href="/dashboard/ai-tutoring">
+                <Card className="overflow-hidden border-0 shadow-sm bg-white hover:shadow-md transition-all duration-300 group cursor-pointer">
+                  <div className="relative h-32 bg-gradient-to-br from-blue-500 to-blue-600">
+                    <video 
+                      className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-300"
+                      autoPlay 
+                      muted 
+                      loop
+                      playsInline
+                    >
+                      <source src="/talkingPreview1.mp4" type="video/mp4" />
+                    </video>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
                   </div>
-                  <div className="flex items-center text-sm text-gray-500">
-                    <span>Ready to learn</span>
-                  </div>
-                </CardContent>
-                <div className="h-1 bg-gradient-to-r from-white via-gray-300 to-black"></div>
-              </Card>
+                  <CardContent className="p-4">
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-800 mb-1">Start Tutoring</h3>
+                        <p className="text-sm text-gray-600">AI-powered learning sessions</p>
+                      </div>
+                      <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
+                        <Video className="h-5 w-5 text-white" />
+                      </div>
+                    </div>
+                    <div className="flex items-center text-sm text-gray-500">
+                      <span>Ready to learn</span>
+                    </div>
+                  </CardContent>
+                  <div className="h-1 bg-gradient-to-r from-white via-gray-300 to-black"></div>
+                </Card>
+              </Link>
 
               {/* Career Quiz Card */}
-              <Card className="overflow-hidden border-0 shadow-sm bg-white hover:shadow-md transition-all duration-300 group">
-                <div className="relative h-32 bg-gradient-to-br from-purple-500 to-purple-600">
-                  <video 
-                    className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-300"
-                    autoPlay 
-                    muted 
-                    loop
-                    playsInline
-                  >
-                    <source src="/talkingPreview2.mp4" type="video/mp4" />
-                  </video>
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-                </div>
-                <CardContent className="p-4">
-                  <div className="flex items-start justify-between mb-3">
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-800 mb-1">Career Quiz</h3>
-                      <p className="text-sm text-gray-600">Discover your path</p>
-                    </div>
-                    <div className="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center">
-                      <GraduationCap className="h-5 w-5 text-white" />
-                    </div>
+              <Link href="/dashboard/career-guide">
+                <Card className="overflow-hidden border-0 shadow-sm bg-white hover:shadow-md transition-all duration-300 group cursor-pointer">
+                  <div className="relative h-32 bg-gradient-to-br from-purple-500 to-purple-600">
+                    <video 
+                      className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-300"
+                      autoPlay 
+                      muted 
+                      loop
+                      playsInline
+                    >
+                      <source src="/talkingPreview2.mp4" type="video/mp4" />
+                    </video>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
                   </div>
-                  <div className="flex items-center text-sm text-gray-500">
-                    <span>Take assessment</span>
+                  <CardContent className="p-4">
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-800 mb-1">Career Quiz</h3>
+                        <p className="text-sm text-gray-600">Discover your path</p>
+                      </div>
+                      <div className="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center">
+                        <GraduationCap className="h-5 w-5 text-white" />
+                      </div>
+                    </div>
+                    <div className="flex items-center text-sm text-gray-500">
+                      <span>Take assessment</span>
+                    </div>
+                  </CardContent>
+                  <div className="h-1 bg-gradient-to-r from-black via-gray-300 to-white"></div>
+                </Card>
+              </Link>
+       {/* Study Groups Card */}
+       <Link href="/dashboard/skill-hub">
+                <Card className="overflow-hidden border-0 shadow-sm bg-white hover:shadow-md transition-all duration-300 group cursor-pointer">
+                  <div className="relative h-32 bg-gradient-to-br from-amber-500 to-amber-600">
+                    <video 
+                      className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-300"
+                      autoPlay 
+                      muted 
+                      loop
+                      playsInline
+                    >
+                      <source src="/talkingPreview4.mp4" type="video/mp4" />
+                    </video>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
                   </div>
-                </CardContent>
-                <div className="h-1 bg-gradient-to-r from-black via-gray-300 to-white"></div>
-              </Card>
+                  <CardContent className="p-4">
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-800 mb-1">Skill Hub</h3>
+                        <p className="text-sm text-gray-600">Enhance your abilities</p>
+                      </div>
+                      <div className="w-10 h-10 bg-amber-500 rounded-lg flex items-center justify-center">
+                        <MessageSquare className="h-5 w-5 text-white" />
+                      </div>
+                    </div>
+                    <div className="flex items-center text-sm text-gray-500">
+                      <span>Test skills</span>
+                    </div>
+                  </CardContent>
+                  <div className="h-1 bg-gradient-to-r from-black via-gray-300 to-white"></div>
+                </Card>
+              </Link>
 
               {/* Practice Exam Card */}
-              <Card className="overflow-hidden border-0 shadow-sm bg-white hover:shadow-md transition-all duration-300 group">
-                <div className="relative h-32 bg-gradient-to-br from-green-500 to-green-600">
-                  <video 
-                    className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-300"
-                    autoPlay 
-                    muted 
-                    loop
-                    playsInline
-                  >
-                    <source src="/talkingPreview3.mp4" type="video/mp4" />
-                  </video>
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-                </div>
-                <CardContent className="p-4">
-                  <div className="flex items-start justify-between mb-3">
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-800 mb-1">Practice Exam</h3>
-                      <p className="text-sm text-gray-600">Test your knowledge</p>
-                    </div>
-                    <div className="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center">
-                      <BookOpen className="h-5 w-5 text-white" />
-                    </div>
+              <Link href="/dashboard/exam-prep">
+                <Card className="overflow-hidden border-0 shadow-sm bg-white hover:shadow-md transition-all duration-300 group cursor-pointer">
+                  <div className="relative h-32 bg-gradient-to-br from-green-500 to-green-600">
+                    <video 
+                      className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-300"
+                      autoPlay 
+                      muted 
+                      loop
+                      playsInline
+                    >
+                      <source src="/talkingPreview3.mp4" type="video/mp4" />
+                    </video>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
                   </div>
-                  <div className="flex items-center text-sm text-gray-500">
-                    <span>Start practicing</span>
-                  </div>
-                </CardContent>
-                <div className="h-1 bg-gradient-to-r from-white via-gray-300 to-black"></div>
-              </Card>
+                  <CardContent className="p-4">
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-800 mb-1">Practice Exam</h3>
+                        <p className="text-sm text-gray-600">Test your knowledge</p>
+                      </div>
+                      <div className="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center">
+                        <BookOpen className="h-5 w-5 text-white" />
+                      </div>
+                    </div>
+                    <div className="flex items-center text-sm text-gray-500">
+                      <span>Start practicing</span>
+                    </div>
+                  </CardContent>
+                  <div className="h-1 bg-gradient-to-r from-white via-gray-300 to-black"></div>
+                </Card>
+              </Link>
 
-              {/* Study Groups Card */}
-              <Card className="overflow-hidden border-0 shadow-sm bg-white hover:shadow-md transition-all duration-300 group">
-                <div className="relative h-32 bg-gradient-to-br from-amber-500 to-amber-600">
-                  <video 
-                    className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-300"
-                    autoPlay 
-                    muted 
-                    loop
-                    playsInline
-                  >
-                    <source src="/talkingPreview4.mp4" type="video/mp4" />
-                  </video>
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-                </div>
-                <CardContent className="p-4">
-                  <div className="flex items-start justify-between mb-3">
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-800 mb-1">Study Groups</h3>
-                      <p className="text-sm text-gray-600">Collaborate with peers</p>
-                    </div>
-                    <div className="w-10 h-10 bg-amber-500 rounded-lg flex items-center justify-center">
-                      <MessageSquare className="h-5 w-5 text-white" />
-                    </div>
-                  </div>
-                  <div className="flex items-center text-sm text-gray-500">
-                    <span>Join discussion</span>
-                  </div>
-                </CardContent>
-                <div className="h-1 bg-gradient-to-r from-black via-gray-300 to-white"></div>
-              </Card>
-                    </div>
+       
+            </div>
 
             {/* Weekly Progress */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -555,28 +702,30 @@ export default function Dashboard() {
                 </CardHeader>
                 <CardContent className="p-6">
                   <div className="space-y-3">
-                    {leaderboardPreview.map((leaderboardUser, index) => (
+                    {leaderboardData.map((leaderboardUser, index) => (
                       <div
                         key={leaderboardUser.id}
                         className={`flex items-center p-3 rounded-lg ${leaderboardUser.name === (userProfile?.name || "You") ? "bg-blue-50 border border-blue-100" : "hover:bg-gray-50"}`}
                       >
                         <div className="w-8 text-center font-bold text-gray-500">{index + 1}</div>
-                        <div className="h-10 w-10 rounded-full overflow-hidden mx-3">
-                          <Image src={leaderboardUser.avatar} alt={leaderboardUser.name} width={40} height={40} />
+                        <div className="h-10 w-10 rounded-full overflow-hidden mx-3 bg-gray-200 flex items-center justify-center">
+                          <span className="text-sm font-medium text-gray-600">
+                            {leaderboardUser.name.charAt(0).toUpperCase()}
+                          </span>
                         </div>
                         <div className="flex-1">
-                          <h4 className={`font-medium ${leaderboardUser.name === (userProfile?.name || "You") ? "text-blue-600" : ""}`}>{leaderboardUser.name}</h4>
+                          <h4 className={`font-medium ${leaderboardUser.name === (userProfile?.name || "You") ? "text-blue-600" : ""}`}>
+                            {leaderboardUser.name}
+                          </h4>
+                          <p className="text-xs text-gray-500">
+                            {formatTime(leaderboardUser.totalTimeSpent)}
+                          </p>
                         </div>
                         <div className="flex items-center">
                           <div className="mr-3 flex items-center">
-                            <Zap className="h-4 w-4 text-amber-500 mr-1" />
-                            <span className="font-bold">{leaderboardUser.xp}</span>
+                            <Gem className="h-4 w-4 text-amber-500 mr-1" />
+                            <span className="font-bold">{leaderboardUser.gems}</span>
                           </div>
-                          {leaderboardUser.change === "up" ? (
-                            <ArrowUp className="h-4 w-4 text-green-500" />
-                          ) : (
-                            <ArrowDown className="h-4 w-4 text-red-500" />
-                          )}
                         </div>
                       </div>
                     ))}
