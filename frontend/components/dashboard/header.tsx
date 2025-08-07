@@ -5,8 +5,12 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Search, BellIcon } from 'lucide-react';
+import { Search, BellIcon, Gem } from 'lucide-react';
 import { AnimatedStats } from './animated-stats';
+import { useWallet } from '@/contexts/wallet-context';
+import { useAuth } from '@/contexts/auth-context';
+import { db } from '@/lib/firebase';
+import { doc, getDoc } from 'firebase/firestore';
 
 interface DashboardHeaderProps {
   title: string;
@@ -55,6 +59,42 @@ export function DashboardHeader({
     return () => observer.disconnect();
   }, [isSidebarCollapsed]);
 
+  const { user } = useAuth();
+  const { address, isConnecting, connectWallet, disconnectWallet } = useWallet();
+
+  // Fetch user name and gems from Firestore
+  const [gems, setGems] = useState<number>(0);
+  const [userName, setUserName] = useState<string>("");
+  const [gemsLoading, setGemsLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      if (!user) {
+        setGems(0);
+        setUserName("");
+        return;
+      }
+      setGemsLoading(true);
+      try {
+        const userDoc = await getDoc(doc(db, 'users', user.uid));
+        if (userDoc.exists()) {
+          const data = userDoc.data();
+          setGems(data.gems || 0);
+          setUserName(data.name || user.displayName || user.email?.split('@')[0] || "User");
+        } else {
+          setGems(0);
+          setUserName(user.displayName || user.email?.split('@')[0] || "User");
+        }
+      } catch (e) {
+        setGems(0);
+        setUserName(user.displayName || user.email?.split('@')[0] || "User");
+      } finally {
+        setGemsLoading(false);
+      }
+    };
+    fetchUserProfile();
+  }, [user]);
+
   return (
     <header className="bg-white shadow-sm sticky top-0 z-30 ml-auto w-full">
       <div className={`flex items-center justify-between h-16 transition-all duration-300 ${
@@ -63,36 +103,45 @@ export function DashboardHeader({
         <h1 className="text-xl font-bold text-gray-900 pl-6">
           {title}
         </h1>
-        
         <div className="flex items-center space-x-4 px-4 md:px-6">
-          {/* Animated Stats */}
-          <div className="hidden lg:block">
-            <AnimatedStats 
-              xp={userStats.xp}
-              position={userStats.position}
-              totalUsers={userStats.totalUsers}
-              streak={userStats.streak}
-            />
+          {/* Gems Section */}
+          <div className="flex items-center px-4 py-1.5 rounded-full bg-gradient-to-r from-amber-50 to-yellow-100 border border-amber-200 shadow-sm min-w-[90px]">
+            <Gem className="h-5 w-5 text-amber-500 mr-2" />
+            {gemsLoading ? (
+              <span className="w-5 h-5 animate-spin rounded-full border-2 border-amber-300 border-t-transparent"></span>
+            ) : (
+              <span className="text-base font-bold text-amber-700">{gems}</span>
+            )}
+            <span className="ml-1 text-xs font-medium text-amber-600">Gems</span>
           </div>
-          
-          {/* Search */}
-          {showSearch && (
-            <div className="hidden md:flex relative">
-              <Search className="h-4 w-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-              <Input placeholder={searchPlaceholder} className="pl-10 w-64" />
-            </div>
+          {/* Wallet Button */}
+          {address ? (
+            <Button
+              size="sm"
+              variant="outline"
+              className="border-emerald-500 text-emerald-600 bg-emerald-50 hover:bg-emerald-100 px-4 py-2 rounded-[24px] font-mono"
+              onClick={disconnectWallet}
+              title={address}
+            >
+              {address.slice(0, 6)}...{address.slice(-4)}
+            </Button>
+          ) : (
+            <Button
+              size="sm"
+              variant="outline"
+              className="border-emerald-500 text-emerald-600 bg-white hover:bg-emerald-50 px-4 py-2 rounded-[24px]"
+              onClick={connectWallet}
+              disabled={isConnecting}
+            >
+              {isConnecting ? 'Connecting...' : 'Connect Wallet'}
+            </Button>
           )}
-
-          {/* Notifications */}
-          <Button variant="ghost" size="icon" className="relative">
-            <span className="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full"></span>
-            <BellIcon className="h-5 w-5" />
-          </Button>
-
-          {/* User Avatar */}
-          <div className="h-9 w-9 rounded-full bg-gray-200 flex items-center justify-center">
-            <span className="font-medium text-sm">JD</span>
-          </div>
+          {/* User Avatar and Name */}
+        
+            <div className="h-7 w-7 rounded-full bg-gray-300 flex items-center justify-center text-gray-700 font-bold text-sm">
+              {userName ? userName[0].toUpperCase() : 'U'}
+            </div>
+    
         </div>
       </div>
     </header>

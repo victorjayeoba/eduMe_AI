@@ -118,9 +118,9 @@ function CareerGuideContent() {
         {/* Caller Avatar Section */}
         <div className="w-2/5 flex flex-col items-center justify-center p-12 relative">
           <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-purple-600/10 backdrop-blur-sm"></div>
-          <div className="relative text-center">
+          <div className="relative flex flex-col items-center justify-center text-center">
             <div className="w-40 h-40 bg-gradient-to-br from-gray-600 to-gray-800 rounded-full flex items-center justify-center mb-8 shadow-2xl ring-4 ring-white/10">
-              <User className="w-20 h-20 text-gray-300" />
+              <User className="w-20 h-20 text-gray-300 mx-auto" />
             </div>
             <h3 className="text-2xl font-bold text-white mb-3 tracking-tight">Career Advisor</h3>
             <p className="text-gray-300 text-base leading-relaxed max-w-xs">Ready to help you discover your ideal career path</p>
