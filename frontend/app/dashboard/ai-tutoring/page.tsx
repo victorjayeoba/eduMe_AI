@@ -44,8 +44,8 @@ export default function AITutoring() {
         onLoad={handleScriptLoad}
         onError={handleScriptError}
         data-mode="full"
-      data-client-key="Z29vZ2xlLW9hdXRoMnwxMTA2MDAwNjY3NDI2NjM4MzMzNzQ6X2NNMktzRkNKQTdYd0NNNTFJYnpT"
-      data-agent-id="v2_agt_9QU6jpY3"
+        data-client-key={process.env.NEXT_PUBLIC_DID_CLIENT_KEY}
+        data-agent-id={process.env.NEXT_PUBLIC_DID_AGENT_ID}
         data-name="did-agent"
         data-monitor="true"
         data-target-id="d-id"
